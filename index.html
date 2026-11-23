@@ -1,334 +1,2518 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Orbital Genesis – Simulasi Gravitasi</title>
-<style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#070d19;--fg:#e2e8f0;--accent:#7dd3fc;--muted:#94a3b8;--panel:rgba(12,20,38,.92);--btn:#1d3557;--btn-fg:#a8dadc;--bd:#457b9d;--hi:#38bdf8}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070d19;--fg:#e2e8f0}}
-:root[data-theme="dark"]{--bg:#070d19;--fg:#e2e8f0}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-body{background:var(--bg);color:var(--fg);font:14px 'Segoe UI',Tahoma,Verdana,sans-serif;overflow:hidden}
-canvas{display:block;width:100%;height:100%;background:radial-gradient(circle at center,#112240 0%,#060b14 100%);touch-action:none}
-#hd{position:absolute;top:calc(env(safe-area-inset-top,0px) + 10px);left:14px;pointer-events:none}
-#hd h1{font-size:1rem;letter-spacing:2px;color:var(--accent)}#tm{font-size:.8rem;color:var(--muted)}
-#panel{position:absolute;top:0;right:0;bottom:0;width:330px;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px calc(env(safe-area-inset-bottom,0px) + 14px);background:var(--panel);border-left:1px solid rgba(100,180,255,.3);backdrop-filter:blur(8px);overflow-y:auto;transition:transform .25s}
-#panel.hide{transform:translateX(100%)}
-#tog{position:absolute;top:calc(env(safe-area-inset-top,0px) + 8px);right:10px;z-index:5}
-section{margin-bottom:14px}
-h2{font-size:.75rem;letter-spacing:1.5px;color:var(--accent);margin:4px 0 8px;text-transform:uppercase}
-.row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.row label{width:84px;color:var(--muted);font-size:.8rem;flex:none}
-.row input[type=range]{flex:1;min-width:0}
-.row input[type=number],.row input[type=text]{width:70px;background:#0b1530;color:var(--fg);border:1px solid var(--bd);border-radius:6px;padding:3px 5px}
-.row input[type=text]{flex:1;width:auto}
-.row input[type=color]{width:36px;height:26px;border:0;background:none}
-button{background:var(--btn);color:var(--btn-fg);border:1px solid var(--bd);padding:6px 11px;border-radius:16px;cursor:pointer;font-weight:bold;font-size:.8rem}
-button:hover,button.on{background:var(--hi);color:#070d19;border-color:var(--hi)}
-button.danger:hover{background:#f87171;border-color:#f87171}
-.chips,.btns{display:flex;flex-wrap:wrap;gap:6px}
-.chips button{padding:4px 9px;font-weight:normal}
-#info{font-size:.78rem;color:var(--muted);line-height:1.55;background:rgba(255,255,255,.04);padding:8px;border-radius:8px}
-#mcmp{font-size:.74rem;color:var(--muted);line-height:1.5;margin:-2px 0 8px;background:rgba(125,211,252,.07);border-left:2px solid var(--accent);padding:6px 8px;border-radius:0 8px 8px 0}
-#toasts{position:absolute;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);width:min(370px,calc(100vw - 24px));display:flex;flex-direction:column;gap:6px;pointer-events:none;z-index:4}
-.toast{background:rgba(12,20,38,.95);border:1px solid var(--bd);border-left:4px solid var(--hi);border-radius:8px;padding:7px 10px;font-size:.78rem;line-height:1.4;color:var(--fg);animation:tin .25s;transition:opacity .6s}
-.toast.bad{border-left-color:#f87171}.toast.warn{border-left-color:#fbbf24}.toast.ok{border-left-color:#4ade80}
-@keyframes tin{from{transform:translateX(-14px);opacity:0}to{transform:none;opacity:1}}
-@media(max-width:700px){#toasts{bottom:calc(env(safe-area-inset-bottom,0px) + 54px)}}
-.hint{font-size:.7rem;color:var(--muted);line-height:1.35;margin:-4px 0 8px}
-#gl{margin:10px 0 4px;border:1px solid var(--bd);border-radius:10px;padding:6px 10px;background:rgba(125,211,252,.04)}
-#gl summary{cursor:pointer;font-weight:600;color:var(--accent);font-size:.82rem;padding:2px 0}
-#gl dl{margin:6px 0 2px}#gl dt{color:var(--fg);font-weight:600;font-size:.76rem;margin-top:8px}#gl dd{margin:2px 0 0;color:var(--muted);font-size:.73rem;line-height:1.5}
-#note{font-size:.72rem;color:var(--muted);line-height:1.4}
-@media(max-width:700px){#panel{top:auto;left:0;width:100%;max-height:48vh;border-left:0;border-top:1px solid rgba(100,180,255,.3)}#panel.hide{transform:translateY(100%)}#tog{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 8px)}#hd h1{font-size:.85rem}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Laboratorium Simulasi Fisika & Gravitasi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            slateDark: {
+              950: '#060913',
+              900: '#0b1021',
+              850: '#10172e',
+              800: '#16203d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      box-sizing: border-box;
+      --bg: #070d19;
+      --fg: #e2e8f0;
+      --accent: #7dd3fc;
+      --muted: #94a3b8;
+      --panel: rgba(12, 20, 38, .92);
+      --btn: #1d3557;
+      --btn-fg: #a8dadc;
+      --bd: #457b9d;
+      --hi: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #060913;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.mode-orbital {
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    body.mode-lab {
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background-image:
+        radial-gradient(at 15% 15%, rgba(49, 46, 129, 0.25) 0px, transparent 50%),
+        radial-gradient(at 85% 85%, rgba(30, 58, 138, 0.22) 0px, transparent 50%);
+    }
+
+    /* Navigasi Tab Utama */
+    .tab-active {
+      background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 20px rgba(79, 70, 229, 0.45);
+      border-color: rgba(129, 140, 248, 0.5);
+    }
+
+    .tab-inactive {
+      background: rgba(15, 23, 42, 0.6);
+      color: #94a3b8;
+      border-color: rgba(51, 65, 85, 0.6);
+    }
+
+    .tab-inactive:hover {
+      color: #e2e8f0;
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    /* =====================================================================
+       STYLE TERISOLASI: SIMULASI 1 - ORBITAL GENESIS (TIDAK DIUBAH)
+       ===================================================================== */
+    #sim-orbital {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font: 14px 'Segoe UI', Tahoma, Verdana, sans-serif;
+      overflow: hidden;
+    }
+
+    #sim-orbital canvas#c {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #112240 0%, #060b14 100%);
+      touch-action: none;
+    }
+
+    #sim-orbital #hd {
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      pointer-events: none;
+    }
+
+    #sim-orbital #hd h1 {
+      font-size: 1rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin: 0;
+    }
+
+    #sim-orbital #tm {
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    #sim-orbital #panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 330px;
+      padding: 10px 14px calc(env(safe-area-inset-bottom, 0px) + 14px);
+      background: var(--panel);
+      border-left: 1px solid rgba(100, 180, 255, .3);
+      backdrop-filter: blur(8px);
+      overflow-y: auto;
+      transition: transform .25s;
+    }
+
+    #sim-orbital #panel.hide {
+      transform: translateX(100%);
+    }
+
+    #sim-orbital #tog {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      z-index: 5;
+    }
+
+    #sim-orbital section {
+      margin-bottom: 14px;
+    }
+
+    #sim-orbital h2 {
+      font-size: .75rem;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      margin: 4px 0 8px;
+      text-transform: uppercase;
+    }
+
+    #sim-orbital .row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    #sim-orbital .row label {
+      width: 84px;
+      color: var(--muted);
+      font-size: .8rem;
+      flex: none;
+    }
+
+    #sim-orbital .row input[type=range] {
+      flex: 1;
+      min-width: 0;
+    }
+
+    #sim-orbital .row input[type=number],
+    #sim-orbital .row input[type=text] {
+      width: 70px;
+      background: #0b1530;
+      color: var(--fg);
+      border: 1px solid var(--bd);
+      border-radius: 6px;
+      padding: 3px 5px;
+    }
+
+    #sim-orbital .row input[type=text] {
+      flex: 1;
+      width: auto;
+    }
+
+    #sim-orbital .row input[type=color] {
+      width: 36px;
+      height: 26px;
+      border: 0;
+      background: none;
+    }
+
+    #sim-orbital button {
+      background: var(--btn);
+      color: var(--btn-fg);
+      border: 1px solid var(--bd);
+      padding: 6px 11px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: .8rem;
+    }
+
+    #sim-orbital button:hover,
+    #sim-orbital button.on {
+      background: var(--hi);
+      color: #070d19;
+      border-color: var(--hi);
+    }
+
+    #sim-orbital button.danger:hover {
+      background: #f87171;
+      border-color: #f87171;
+    }
+
+    #sim-orbital .chips,
+    #sim-orbital .btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    #sim-orbital .chips button {
+      padding: 4px 9px;
+      font-weight: normal;
+    }
+
+    #sim-orbital #info {
+      font-size: .78rem;
+      color: var(--muted);
+      line-height: 1.55;
+      background: rgba(255, 255, 255, .04);
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    #sim-orbital #mcmp {
+      font-size: .74rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: -2px 0 8px;
+      background: rgba(125, 211, 252, .07);
+      border-left: 2px solid var(--accent);
+      padding: 6px 8px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    #sim-orbital #toasts {
+      position: absolute;
+      left: 12px;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+      width: min(370px, calc(100vw - 24px));
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    #sim-orbital .toast {
+      background: rgba(12, 20, 38, .95);
+      border: 1px solid var(--bd);
+      border-left: 4px solid var(--hi);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: .78rem;
+      line-height: 1.4;
+      color: var(--fg);
+      animation: tin .25s;
+      transition: opacity .6s;
+    }
+
+    #sim-orbital .toast.bad {
+      border-left-color: #f87171;
+    }
+
+    #sim-orbital .toast.warn {
+      border-left-color: #fbbf24;
+    }
+
+    #sim-orbital .toast.ok {
+      border-left-color: #4ade80;
+    }
+
+    @keyframes tin {
+      from { transform: translateX(-14px); opacity: 0; }
+      to { transform: none; opacity: 1; }
+    }
+
+    @media (max-width: 700px) {
+      #sim-orbital #toasts {
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 54px);
+      }
+      #sim-orbital #panel {
+        top: auto;
+        left: 0;
+        width: 100%;
+        max-height: 48vh;
+        border-left: 0;
+        border-top: 1px solid rgba(100, 180, 255, .3);
+      }
+      #sim-orbital #panel.hide {
+        transform: translateY(100%);
+      }
+      #sim-orbital #tog {
+        top: auto;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+      }
+      #sim-orbital #hd h1 {
+        font-size: .85rem;
+      }
+    }
+
+    #sim-orbital .hint {
+      font-size: .7rem;
+      color: var(--muted);
+      line-height: 1.35;
+      margin: -4px 0 8px;
+    }
+
+    #sim-orbital #gl {
+      margin: 10px 0 4px;
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 6px 10px;
+      background: rgba(125, 211, 252, .04);
+    }
+
+    #sim-orbital #gl summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--accent);
+      font-size: .82rem;
+      padding: 2px 0;
+    }
+
+    #sim-orbital #gl dl {
+      margin: 6px 0 2px;
+    }
+
+    #sim-orbital #gl dt {
+      color: var(--fg);
+      font-weight: 600;
+      font-size: .76rem;
+      margin-top: 8px;
+    }
+
+    #sim-orbital #gl dd {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: .73rem;
+      line-height: 1.5;
+    }
+
+    #sim-orbital #note {
+      font-size: .72rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* =====================================================================
+       STYLE TERISOLASI: SIMULASI 2 & 3 - DINAMO SEPEDA & TURBIN ANGIN
+       ===================================================================== */
+    #sim-lab-fisika input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: #1e293b;
+      outline: none;
+      cursor: pointer;
+    }
+
+    #sim-lab-fisika input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #38bdf8);
+      border: 2px solid #e0e7ff;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.65);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    #sim-lab-fisika input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.85);
+    }
+
+    #sim-lab-fisika input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #38bdf8);
+      border: 2px solid #e0e7ff;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.65);
+      cursor: pointer;
+    }
+
+    #sim-lab-fisika input[type="range"]:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    #sim-lab-fisika .glass-card {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(99, 102, 241, 0.18);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+    }
+
+    #sim-lab-fisika .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 360px;
+      border-radius: 1rem;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 45%, #111936 0%, #070b19 100%);
+      border: 1px solid rgba(99, 102, 241, 0.24);
+    }
+
+    @media (min-width: 768px) {
+      #sim-lab-fisika .canvas-container {
+        height: 430px;
+      }
+    }
+
+    #pedalCanvas {
+      touch-action: none;
+      cursor: grab;
+    }
+
+    #pedalCanvas:active {
+      cursor: grabbing;
+    }
+  </style>
 </head>
-<body>
-<canvas id="c"></canvas>
-<div id="hd"><h1>ORBITAL GENESIS</h1><div id="tm"></div><div id="lg" style="font-size:.8rem;color:#fbbf24;max-width:60vw"></div></div>
-<div id="panel">
-  <section>
-    <h2>Kontrol</h2>
-    <div class="btns"><button id="pause">⏸ Jeda</button><button id="trails" class="on">Jejak</button><button id="ideal" class="on">Orbit ideal</button><button id="names" class="on">Nama</button><button id="col" class="on">Tabrakan: pecah</button><button id="cine" class="on">Sinema</button><button id="zin">＋</button><button id="zout">－</button></div>
-    <div class="row" style="margin-top:8px"><label>Ukuran tampil</label><input type="range" id="szr" min="0.3" max="1.5" step="0.05" value="0.75"></div><div class="row"><label title="Seberapa cepat waktu simulasi berjalan dibanding waktu nyata">Waktu</label><input type="range" id="spd" min="1" max="60" step="1" value="1" title="Kecepatan waktu simulasi: 1 bulan sampai 5 tahun per detik nyata"><span id="spdv" style="min-width:92px;text-align:right"></span></div><div id="rt" style="font-size:.74rem;color:var(--muted);line-height:1.4;margin:-2px 0 8px"></div>
-  </section>
-  <section>
-    <h2>Objek (klik di kanvas atau pilih)</h2>
-    <div class="chips" id="chips"></div>
-    <div class="btns" style="margin-top:8px"><button id="add">＋ Planet</button><button id="jup">Jupiter ×50</button><button id="sun2">Matahari ×2</button><button id="m50" title="Naikkan massa objek terpilih 50× (Matahari: 2×)">Massa ×50 (terpilih)</button><button id="m50d" title="Turunkan massa objek terpilih 50× (Matahari: 2×)">Massa ÷50 (terpilih)</button><button id="hit">Uji tabrakan</button><button id="hit2">Uji serempet</button><button class="danger psp" id="del">Hapus Objek</button><button id="reset">Reset</button></div>
-    <div class="row" style="margin-top:8px"><label>Penabrak</label><select id="s_imp" style="flex:1;background:#0b1530;color:var(--fg);border:1px solid var(--bd);border-radius:6px;padding:3px"></select></div>
-    <div class="row"><label>Sasaran</label><select id="s_tgt" style="flex:1;background:#0b1530;color:var(--fg);border:1px solid var(--bd);border-radius:6px;padding:3px"></select></div>
-    <div class="row"><label title="Kecepatan benturan sebagai kelipatan kecepatan edar sasaran. 1,0× sama dengan kecepatan orbitnya.">Kecepatan</label><input type="range" id="s_v" min="0.2" max="1.5" step="0.05" value="0.7"><span id="s_vv" style="min-width:38px;text-align:right">0.70×</span></div>
-    <div class="row"><label title="Seberapa ke tepi benturannya: 0 = tepat di tengah, mendekati 1 = hanya menyentuh sisi">Offset serempet</label><input type="range" id="s_b" min="0.4" max="0.92" step="0.01" value="0.85"><span id="s_bv" style="min-width:38px;text-align:right">0.85</span></div>
-  </section>
-  <section id="ed">
-    <h2 id="edt">Pengaturan Objek</h2>
-    <div class="row psp"><label>Nama</label><input type="text" id="f_name"><input type="color" id="f_color"></div>
-    <div class="row psp"><label title="Sumbu semi-mayor: jarak rata-rata ke Matahari. 1 AU = jarak Bumi–Matahari (±149,6 juta km)">Jarak a (AU)</label><input type="range" id="r_a" min="0.2" max="60" step="0.01"><input type="number" id="n_a" min="0.2" max="60" step="0.01"></div>
-    <div class="row psp"><label title="Seberapa lonjong orbit: 0 = lingkaran, mendekati 1 = sangat lonjong">Eksentrisitas</label><input type="range" id="r_e" min="0" max="0.95" step="0.001"><input type="number" id="n_e" min="0" max="0.95" step="0.001"></div>
-    <div class="row psp"><label title="Ukuran efektif untuk mendeteksi tabrakan (bukan ukuran sebenarnya)">Radius tabrakan</label><input type="range" id="r_r" min="2" max="40" step="0.5"><input type="number" id="n_r" min="2" max="40" step="0.5"></div>
-    <div class="row"><label id="ml" title="Massa dibandingkan massa Bumi (⊕) atau Matahari (M☉)">Massa (⊕)</label><input type="range" id="r_mass" step="0.01"><input type="number" id="n_mass" min="0.001" step="any"></div>
-    <div id="mcmp"></div>
-    <div id="info"></div>
-  </section>
-  <details id="gl"><summary>Penjelasan istilah</summary><dl>
-<dt>AU</dt><dd>Satuan jarak: 1 AU = jarak Bumi ke Matahari (±149,6 juta km). Neptunus ±30 AU.</dd>
-<dt>a (Jarak a)</dt><dd>Jarak rata-rata planet ke Matahari, dalam AU.</dd>
-<dt>e (eksentrisitas)</dt><dd>Kelonjongan orbit. 0 = lingkaran, makin besar makin lonjong. Di atas 1 planet tidak kembali.</dd>
-<dt>Perihelion dan aphelion</dt><dd>Titik orbit terdekat dan terjauh dari Matahari. Δperihelion = pergeseran titik terdekat itu.</dd>
-<dt>Δa, Δe</dt><dd>Perubahan a dan e sejak suatu kejadian. Kecil berarti orbit hampir tidak terganggu.</dd>
-<dt>Massa Bumi (⊕) dan Matahari (M☉)</dt><dd>1 M☉ ≈ 333.000 massa Bumi.</dd>
-<dt>Kecepatan lepas</dt><dd>Kecepatan minimum agar lepas dari tarikan Matahari.</dd>
-<dt>Lintasan terbuka</dt><dd>Orbit yang tidak kembali; benda menjauh selamanya sampai hilang di 800 AU.</dd>
-<dt>Orbit ideal</dt><dd>Elips teoretis bila hanya Matahari yang menarik planet. Bergeser saat planet lain mengganggu.</dd>
-<dt>Orbit sebelum perubahan (kuning putus-putus)</dt><dd>Orbit awal sebelum massa diubah, untuk dibandingkan dengan orbit sekarang.</dd>
-<dt>Gaya dan percepatan</dt><dd>Massa planet naik, gayanya naik, tapi percepatannya hampir sama. Yang berubah: ayunan Matahari dan tarikan pada planet lain.</dd>
-<dt>Gravitasi N-benda</dt><dd>Semua benda saling menarik, bukan hanya Matahari.</dd>
-<dt>Tarikan dibanding Matahari (%)</dt><dd>Kekuatan tarikan planet lain dibanding tarikan Matahari. Kecil, tapi menggeser orbit pelan-pelan.</dd>
-<dt>km/s dan AU/tahun</dt><dd>Satuan kecepatan. 1 AU/tahun ≈ 4,74 km/s.</dd>
-<dt>Waktu</dt><dd>Lama waktu simulasi per 1 detik nyata (1 bulan sampai 5 tahun).</dd>
-<dt>Sinema</dt><dd>Kamera mendekat dan waktu melambat saat dua planet hampir bertabrakan.</dd>
-<dt>Radius tabrakan</dt><dd>Ukuran efektif benda untuk mendeteksi tabrakan.</dd>
-<dt>Offset serempet</dt><dd>Dekat 0 = benturan tepat di tengah. Dekat 1 = hanya menyentuh sisi.</dd>
-<dt>Kecepatan benturan</dt><dd>Kecepatan penabrak dibanding kecepatan edar sasaran. Makin cepat, makin hancur.</dd>
-<dt>Puing</dt><dd>Pecahan hasil tabrakan; bisa jatuh ke Matahari, menyatu lagi, atau terlempar.</dd>
-<dt>Planet Baru</dt><dd>Hasil dua planet yang bergabung.</dd>
-</dl></details>
-<p id="note">Simulasi gravitasi N-benda: Matahari dan semua planet saling menarik, memakai data orbit nyata dan satuan AU–tahun. Jarak di layar dikompresi agar semua planet muat (hanya tampilan, fisika tetap memakai jarak asli). Ubah massa planet atau Matahari untuk melihat orbit terganggu atau terlempar. Tabrakan bisa bergabung, hancur sebagian, atau hancur total, tergantung kecepatan benturan. Pilih penabrak dan sasaran lalu tekan Uji tabrakan atau Uji serempet. Bila planet besar dihapus, orbit planet lain bergeser pelan; lihat Δa, Δe, dan Δperihelion di panel info (percepat waktu agar terlihat). Pemberitahuan di kiri bawah muncul bila orbit berubah drastis atau planet lepas dari Matahari; panah merah menunjuk planet yang sudah jauh.</p>
-</div>
-<div id="toasts" role="status" aria-live="polite"></div>
-<button id="tog">⚙ Panel</button>
-<script>
-const $=id=>document.getElementById(id),cv=$('c'),ctx=cv.getContext('2d'),G=39.478,TILT=.5,EM=3.003e-6,EPS=.004;
-const DATA=[['Merkurius',.387,.2056,77.5,.055,'#a8a29e',4,.5],['Venus',.723,.0068,131.5,.815,'#fde047',7,2.1],['Bumi',1,.0167,102.9,1,'#38bdf8',7.5,4],['Mars',1.524,.0934,336,.107,'#f97316',5.5,1.2],['Jupiter',5.204,.0489,14.3,317.8,'#fdba74',15,5.2],['Saturnus',9.58,.0565,93.1,95.2,'#fef08a',12,3.1],['Uranus',19.2,.0472,173,14.5,'#67e8f9',9,.8],['Neptunus',30.05,.0086,48.1,17.1,'#3b82f6',8.5,2.7]];
-let bodies,sun,sel,tsim=0,W,H,cx,cy,S=1,RM=300,MA=30,sz=.75,zoom=1,spd=1/12,paused=false,trails=true,names=true,ideal=true,P=.5,cnt=0,last=performance.now();
-const planets=()=>bodies.filter(b=>!b.sun),thNow=p=>Math.atan2(p.y-sun.y,p.x-sun.x)-p.w;
-function orbit(p,a,e,th){e=Math.min(.95,Math.max(0,+e||0));a=Math.max(.05,+a||1);p.a=a;p.e=e;p.a0=a;p.e0=e;p.st=0;p.far=0;p.chg=0;const mu=G*(sun.m+p.m),pp=a*(1-e*e),r=pp/(1+e*Math.cos(th)),ph=p.w+th,k=Math.sqrt(mu/pp),vr=k*e*Math.sin(th),vt=k*(1+e*Math.cos(th)),c=Math.cos(ph),s=Math.sin(ph);
- p.x=sun.x+r*c;p.y=sun.y+r*s;p.vx=sun.vx+vr*c-vt*s;p.vy=sun.vy+vr*s+vt*c;p.trail=[];p.lt=tsim;p.T=0}
-function init(){sun={name:'Matahari',sun:1,m:1,x:0,y:0,vx:0,vy:0,color:'#fde047'};bodies=[sun];tsim=0;impact=null;
- DATA.forEach(d=>{const p={name:d[0],color:d[5],r:d[6],m:d[4]*EM,w:d[3]*Math.PI/180};bodies.push(p);orbit(p,d[1],d[2],d[7])});
- let px=0,py=0;bodies.forEach(b=>{px+=b.m*b.vx;py+=b.m*b.vy});sun.vx-=px/sun.m;sun.vy-=py/sun.m;sel=bodies[3]}
-const ax=[],ay=[];
-function acc(){const n=bodies.length;for(let i=0;i<n;i++){ax[i]=0;ay[i]=0}
- for(let i=0;i<n;i++){const a=bodies[i];for(let j=i+1;j<n;j++){const b=bodies[j],dx=b.x-a.x,dy=b.y-a.y,d2=dx*dx+dy*dy+EPS*EPS,f=G/(d2*Math.sqrt(d2));ax[i]+=f*b.m*dx;ay[i]+=f*b.m*dy;ax[j]-=f*a.m*dx;ay[j]-=f*a.m*dy}}}
-function step(h){acc();bodies.forEach((b,i)=>{b.vx+=ax[i]*h/2;b.vy+=ay[i]*h/2;b.x+=b.vx*h;b.y+=b.vy*h});acc();bodies.forEach((b,i)=>{b.vx+=ax[i]*h/2;b.vy+=ay[i]*h/2})}
-function rec(){bodies.forEach(b=>{if(b.sun||tsim-b.lt<b.T)return;b.lt=tsim;const x=b.x-sun.x,y=b.y-sun.y,r=Math.hypot(x,y);b.T=Math.pow(r,1.5)/Math.sqrt(sun.m+b.m)/260;b.trail.push([x,y]);if(b.trail.length>260)b.trail.shift()})}
-function merge(){let ch=false;for(let i=0;i<bodies.length;i++)for(let j=i+1;j<bodies.length;j++){const a=bodies[i],b=bodies[j];if(Math.hypot(a.x-b.x,a.y-b.y)<(a.sun?RC(a)+RC(b)*.5:RC(a)+RC(b))){if(!a.sun&&(a.im>tsim||b.im>tsim))continue;if(a.sun){log(b.name+' jatuh ke Matahari');if(!b.deb)notify(b.name+' jatuh ke Matahari dan melebur.','warn');fx.push({x:b.x-sun.x,y:b.y-sun.y,t:performance.now()})}else if(frag&&smash2(a,b)){sync();return true}const M=a.m+b.m;['x','y','vx','vy'].forEach(k=>a[k]=(a[k]*a.m+b[k]*b.m)/M);if(!a.sun&&b.m>a.m){a.color=b.color;a.name=b.name}if(!a.sun)a.r=Math.cbrt(a.r**3+b.r**3);a.m=M;if(sel===b)sel=a;bodies.splice(j,1);j--;ch=true}}
- for(let i=bodies.length-1;i>0;i--)if(!isFinite(bodies[i].x+bodies[i].y+bodies[i].vx+bodies[i].vy)||Math.hypot(bodies[i].x-sun.x,bodies[i].y-sun.y)>800){if(sel===bodies[i])sel=sun;noteVanish(bodies[i]);escNote(bodies[i]);bodies.splice(i,1);ch=true}
- if(ch)sync();return ch}
-let frag=true,cine=true,lastHit=null,cam=1,fpx=0,fpy=0,fx=[],lgT,curSl=1,newN=0;
-function log(s){$('lg').textContent=s;clearTimeout(lgT);lgT=setTimeout(()=>$('lg').textContent='',7000)}
-function setEl(p){const rx=p.x-sun.x,ry=p.y-sun.y,vx=p.vx-sun.vx,vy=p.vy-sun.vy,r=Math.hypot(rx,ry),v2=vx*vx+vy*vy,mu=G*(sun.m+p.m),E=v2/2-mu/r,d=rx*vx+ry*vy,ex=((v2-mu/r)*rx-d*vx)/mu,ey=((v2-mu/r)*ry-d*vy)/mu;p.e=Math.hypot(ex,ey);p.w=Math.atan2(ey,ex);p.a=E<0?-mu/(2*E):0;if(E>=0)p.e=2}
-function smash(a,b){if(a.deb&&b.deb)return false;const M=a.m+b.m,mu=a.m*b.m/M,dvx=a.vx-b.vx,dvy=a.vy-b.vy,v2=dvx*dvx+dvy*dvy,R=4.26e-5*(Math.cbrt(a.m/EM)+Math.cbrt(b.m/EM)),q=(.5*mu*v2/M)/(G*M/R)/.15,X=(a.x*a.m+b.x*b.m)/M,Y=(a.y*a.m+b.y*b.m)/M,VX=(a.vx*a.m+b.vx*b.m)/M,VY=(a.vy*a.m+b.vy*b.m)/M,big=a.m>=b.m?a:b,sm=big===a?b:a,kms=(Math.sqrt(v2)*4.74).toFixed(1);
- lastHit={x:X-sun.x,y:Y-sun.y,vx:VX-sun.vx,vy:VY-sun.vy,t:performance.now()};fx.push(lastHit);
- if(q<1||bodies.length>70){log(a.name+' bergabung dengan '+b.name+' (benturan '+kms+' km/s)');return false}
- const mr=q>=5?0:big.m*(1-.2*(q-1)),n=q>=5?6:4,w=Array.from({length:n},()=>.5+Math.random()),ws=w.reduce((s,x)=>s+x,0),vk=.8*Math.sqrt(v2),off=Math.random()*6.28,nb=[];
- bodies=bodies.filter(x=>x!==a&&x!==b);
- if(mr>0){const p={name:big.name,color:big.color,r:big.r*Math.cbrt(mr/big.m),m:mr,x:X,y:Y,vx:VX,vy:VY,trail:[],lt:tsim,T:0,im:tsim+.03};setEl(p);nb.push(p)}
- for(let i=0;i<n;i++){const th=off+i*6.283/n,c=Math.cos(th),s=Math.sin(th),kk=vk*(.5+Math.random()),m=(M-mr)*w[i]/ws,p={name:'Puing',deb:1,color:i%2?big.color:sm.color,r:Math.max(1.5,Math.cbrt((a.r**3+b.r**3)*m/M)*1.2),m,x:X+.02*c,y:Y+.02*s,vx:VX+kk*c,vy:VY+kk*s,trail:[],lt:tsim,T:0,im:tsim+.03};setEl(p);nb.push(p)}
- bodies.push(...nb);if(sel===a||sel===b)sel=nb[0]||sun;
- log(a.name+' menabrak '+b.name+' ('+kms+' km/s): '+(mr>0?'hancur sebagian, sisa '+big.name+' + '+n+' puing':'hancur total menjadi '+n+' puing'));return true}
-function RC(p){return p.sun?.04:p.r*.008}
-function ppaLog(r){if(P>=1)return S;const rmin=36*sunK()+16,rm=Math.max(rmin+30,RM*zoom);return r<R0?rmin/R0:(rm-rmin)/Math.log(Math.max(MA,R0*2)/R0)/Math.max(r,R0)}
-function fm(n){return n>=1e9?(n/1e9).toFixed(2)+' miliar':n>=1e6?(n/1e6).toFixed(2)+' juta':n>=1e3?(n/1e3).toFixed(1)+' ribu':n.toFixed(1)}
-function rateTxt(){const k=spd*curSl;$('rt').innerHTML='1 detik nyata = <b>'+(k>=2?k.toFixed(2)+' tahun':(k*12).toFixed(2)+' bulan')+'</b> simulasi, yaitu <b>'+fm(k*31557600)+'×</b> lebih cepat dari waktu nyata'+(curSl<.9?' (sedang slow motion)':'')+(thr?' (dibatasi kemampuan perangkat, waktu berjalan lebih lambat dari angka ini)':'')}
-function mix(c1,c2,w){const h=c=>/^#[0-9a-f]{6}$/i.test(c)?[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)):null,x=h(c1),y=h(c2);if(!x||!y)return c1;return '#'+x.map((v,i)=>Math.round(v*(1-w)+y[i]*w).toString(16).padStart(2,'0')).join('')}
-function smash2(a,b){if(a.deb||b.deb||bodies.length>66)return false;
- const M=a.m+b.m,mu=a.m*b.m/M,dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1e-9,dvx=b.vx-a.vx,dvy=b.vy-a.vy,v2=dvx*dvx+dvy*dvy,v=Math.sqrt(v2)||1e-9,Rs=RC(a)+RC(b),bn=Math.min(1,Math.abs(dx*dvy-dy*dvx)/v/Rs),
-  R=4.26e-5*(Math.cbrt(a.m/EM)+Math.cbrt(b.m/EM)),q=(.5*mu*v2/M)/(G*M/R)/.15,kms=(v*4.74).toFixed(1),
-  X=(a.x*a.m+b.x*b.m)/M,Y=(a.y*a.m+b.y*b.m)/M,VX=(a.vx*a.m+b.vx*b.m)/M,VY=(a.vy*a.m+b.vy*b.m)/M,big=a.m>=b.m?a:b,sm=big===a?b:a,nb=[],ro=Rs*.6+.03;
- lastHit={x:X-sun.x,y:Y-sun.y,vx:VX-sun.vx,vy:VY-sun.vy,t:performance.now(),cam:Math.max(1,Math.min(60,16/((Rs/2)*ppa(Math.hypot(X-sun.x,Y-sun.y)))))};fx.push(lastHit);
- const burst=(col,m,n,x,y,vx,vy,kv,rr)=>{const w=Array.from({length:n},()=>.6+.8*Math.random()),ws=w.reduce((s,t)=>s+t,0),off=Math.random()*6.28;for(let i=0;i<n;i++){const th=off+i*6.283/n,c=Math.cos(th),s=Math.sin(th),k=kv*(.5+Math.random()),mm=m*w[i]/ws,p={name:'Puing',deb:1,color:col,r:Math.max(1.5,Math.cbrt(mm/EM)*2.8),m:mm,x:x+rr*c,y:y+rr*s,vx:vx+k*c,vy:vy+k*s,trail:[],lt:tsim,T:0,im:tsim+.1};setEl(p);nb.push(p)}};
- if(bn>=.75){const f=Math.max(.04,Math.min(.25,.04+.04*q)),nx=dx/d,ny=dy/d,px=a.x+nx*RC(a),py=a.y+ny*RC(a),ma=a.m*f,mb=b.m*f;
-  burst(a.color,ma,2,px,py,VX,VY,.5*v,.03);burst(b.color,mb,2,px,py,VX,VY,.5*v,.03);
-  a.m-=ma;b.m-=mb;a.r*=Math.cbrt(1-f);b.r*=Math.cbrt(1-f);
-  const vn=dvx*nx+dvy*ny;if(vn<0){const J=-1.3*vn*a.m*b.m/(a.m+b.m);a.vx-=J/a.m*nx;a.vy-=J/a.m*ny;b.vx+=J/b.m*nx;b.vy+=J/b.m*ny}
-  const gap=Rs*1.1-d;if(gap>0){const t=a.m+b.m;a.x-=nx*gap*b.m/t;a.y-=ny*gap*b.m/t;b.x+=nx*gap*a.m/t;b.y+=ny*gap*a.m/t}
-  a.im=b.im=tsim+.1;a.trail=[];b.trail=[];setEl(a);setEl(b);bodies.push(...nb);
-  log(a.name+' menyerempet '+b.name+' ('+kms+' km/s): pecah sebagian, masing-masing kehilangan '+(f*100).toFixed(0)+'% massa');return true}
- if(bn>=.4){const keep=.25*sm.m,lose=.08*big.m,m0=big.m;
-  burst(sm.color,.75*sm.m,4,X,Y,VX,VY,.9*v,ro);burst(big.color,lose,2,X,Y,VX,VY,.7*v,ro);
-  big.vx=(big.vx*m0+sm.vx*keep)/(m0+keep);big.vy=(big.vy*m0+sm.vy*keep)/(m0+keep);big.m=m0-lose+keep;big.r=Math.cbrt(big.r**3+.25*sm.r**3)*.97;big.im=tsim+.1;big.trail=[];setEl(big);
-  bodies=bodies.filter(x=>x!==sm);bodies.push(...nb);if(sel===sm)sel=big;
-  log(sm.name+' menabrak '+big.name+' dari samping ('+kms+' km/s): '+sm.name+' hancur jadi 4 puing, '+big.name+' bertahan');return true}
- const df=q>=15?1:Math.min(.6,.08+.04*q),mr=M*(1-df),dm=M-mr,n=q>=15?7:5;let p=null;
- bodies=bodies.filter(x=>x!==a&&x!==b);
- if(mr>0){p={name:'Planet Baru '+(++newN),color:mix(big.color,sm.color,sm.m/M),r:Math.cbrt(a.r**3+b.r**3)*.95,m:mr,x:X,y:Y,vx:VX,vy:VY,trail:[],lt:tsim,T:0,im:tsim+.1};setEl(p);nb.push(p)}
- if(dm>0){burst(big.color,dm*.55,Math.ceil(n/2),X,Y,VX,VY,.9*v,ro);burst(sm.color,dm*.45,Math.floor(n/2),X,Y,VX,VY,.9*v,ro)}
- bodies.push(...nb);if(sel===a||sel===b)sel=p||sun;
- log(a.name+' menabrak '+b.name+' penuh ('+kms+' km/s): '+(p?'pecah lalu bergabung menjadi '+p.name+' + '+n+' puing':'meledak total menjadi '+n+' puing'));return true}
-let impO=null,tgtO=null;
-function fillSel(){const L=bodies.filter(b=>!b.sun&&!b.deb);if(L.length<2){['s_imp','s_tgt'].forEach(id=>$(id).innerHTML='');return}if(!tgtO||!bodies.includes(tgtO))tgtO=L.find(b=>b.name==='Bumi')||L[0];if(!impO||!bodies.includes(impO)||impO===tgtO)impO=L.find(b=>b!==tgtO&&b.name==='Venus')||L.find(b=>b!==tgtO);
- ['s_imp','s_tgt'].forEach(id=>{const s=$(id),cur=id==='s_imp'?impO:tgtO;s.innerHTML='';L.forEach(b=>{const o=document.createElement('option');o.value=bodies.indexOf(b);o.textContent=b.name;if(b===cur)o.selected=true;s.appendChild(o)})})}
-function trial(tgt,ux,uy,nx,ny,off,vr,y){let tx=tgt.x-sun.x,ty=tgt.y-sun.y,tvx=tgt.vx-sun.vx,tvy=tgt.vy-sun.vy,ix=tx+ux*off+nx*y,iy=ty+uy*off+ny*y,ivx=tvx-ux*vr,ivy=tvy-uy*vr,h=.0004,best=9,sg=1;const GM=G*sun.m;
- for(let t=0;t<off/vr*2.2;t+=h){let r=Math.hypot(tx,ty),f=GM/(r*r*r);tvx-=f*tx*h;tvy-=f*ty*h;tx+=tvx*h;ty+=tvy*h;r=Math.hypot(ix,iy);f=GM/(r*r*r);ivx-=f*ix*h;ivy-=f*iy*h;ix+=ivx*h;iy+=ivy*h;const rx=ix-tx,ry=iy-ty,d=Math.hypot(rx,ry);if(d<best){best=d;sg=Math.sign(rx*(ivy-tvy)-ry*(ivx-tvx))||1}}
- return best*sg}
-let impV=.7,grazeB=.85,aimErr=0,impact=null,lastEl=0;
-const sci=x=>{const[m,e]=x.toExponential(2).split('e'),sp='⁰¹²³⁴⁵⁶⁷⁸⁹';return m.replace('.',',')+'×10'+(e[0]=='-'?'⁻':'')+[...e.replace(/[+-]/,'')].map(c=>sp[+c]).join('')};
-let escN=0,escT=0,baryOn=true,massStart=null;
-const fkm=au=>{const km=au*149597870.7;return km<1e6?fnum(km)+' km':fnum(km/1e6)+' juta km'};
-// catat orbit semua planet sebelum massa diubah, supaya pergeseran sesudahnya bisa diukur
-function markMass(b){if(!b||(impact&&impact.kind==='massa'&&impact.ref===b))return;const base=new Map();planets().forEach(p=>{if(p.deb)return;const el=elems(p);if(el.ok)base.set(p,el)});impact={name:'massa '+b.name,act:'diubah',kind:'massa',ref:b,t:tsim,m:b.m,base}}
-function massNote(b,old){if(!b||!(old>0)||Math.abs(b.m/old-1)<.02)return;const dm=b.m-old,inf=[];
- if(!b.sun)planets().forEach(p=>{if(p===b||p.deb)return;const d=Math.hypot(p.x-b.x,p.y-b.y)||1e-9,r=Math.hypot(p.x-sun.x,p.y-sun.y)||1e-9;inf.push([p,Math.abs(dm)/(d*d)/(sun.m/(r*r))])});
- inf.sort((x,y)=>y[1]-x[1]);const k=b.m/old;let t='Massa '+b.name+(k>=1?' naik ':' turun ')+fnum(k>=1?k:1/k)+'×.';
- if(inf.length)t+=' Perubahan tarikan paling terasa di '+inf.slice(0,2).map(x=>x[0].name+' ('+(x[1]*100).toPrecision(2)+'% dari tarikan Matahari)').join(' dan ')+'.';
- else if(b.sun)t+=' Semua planet merasakannya: orbitnya akan berubah.';
- t+=' Dampak pada planet lain muncul pelan. Lihat Δ orbit di panel info dan garis kuning putus-putus (orbit sebelum perubahan).';notify(t,'ok',13000)}
-// pusat massa seluruh sistem relatif terhadap Matahari: Matahari berayun mengelilinginya
-function baryOff(){let X=0,Y=0,M=0;bodies.forEach(b=>{X+=b.m*b.x;Y+=b.m*b.y;M+=b.m});if(!(M>0))return[0,0,0];const dx=X/M-sun.x,dy=Y/M-sun.y;return[dx,dy,Math.hypot(dx,dy)]}
-// perkiraan waktu (tahun) hingga lintasan terbuka mencapai 800 AU, dihitung dari energi dan momentum sudut
-function escETA(r,rd,E,mu,hh){const vr2=q=>2*(E+mu/q)-hh*hh/(q*q),seg=(a,b)=>{const N=400;let s=0;for(let k=0;k<N;k++){const u=(k+.5)/N,q=a+(b-a)*u*u,v=Math.sqrt(Math.max(vr2(Math.max(q,.02)),1e-8));s+=2*(b-a)*u/N/v}return s};
- if(r>=800)return 0;if(rd<0){const rp=Math.min(r,hh*hh/(mu+Math.sqrt(mu*mu+2*E*hh*hh)));return seg(rp,r)+seg(rp,800)}return seg(r,800)}
-function notify(t,kind,ms){const c=$('toasts');if(!c)return;const e=document.createElement('div');e.className='toast '+(kind||'warn');e.textContent=t;c.appendChild(e);while(c.children.length>4)c.removeChild(c.firstChild);setTimeout(()=>{e.style.opacity=0;setTimeout(()=>e.remove(),650)},ms||10000)}
-// benda melewati 800 AU: menghilang dari simulasi
-function escNote(b){if(!b||b.sun||!isFinite(b.x+b.y+b.vx+b.vy))return;
- if(b.deb){escN++;clearTimeout(escT);escT=setTimeout(()=>{notify(escN+' puing terlempar keluar dari tata surya (>800 AU) dan menghilang dari simulasi.','warn');escN=0},400);return}
- notify(b.name+' keluar dari jangkauan tata surya (>800 AU), tidak terlihat lagi dan menghilang dari simulasi.','bad',14000)}
-// pantau planet yang lepas dari orbit, terlepas dari Matahari, atau menjauh
-function watchOrbits(){const unb=[],chg=[],back=[];
- planets().forEach(p=>{if(p.deb||!isFinite(p.x+p.y+p.vx+p.vy)||p.im>tsim)return;const el=elems(p),r=Math.hypot(p.x-sun.x,p.y-sun.y);
-  if(p.a0===undefined){p.a0=el.ok?el.a:r;p.e0=el.ok?el.e:0;p.st=el.ok?0:2;p.far=0;p.chg=0}
-  if(!el.ok){if(p.st!==2){p.st=2;unb.push(p)}
-   for(const T of [50,200,500])if(r>T&&p.far<T){p.far=T;notify(p.name+' sudah '+T+' AU dari Matahari dan terus menjauh. Di 800 AU ia hilang dari simulasi.','warn')}}
-  else{if(p.st===2){p.st=0;p.far=0;back.push(p)}
-   const da=Math.abs(el.a/p.a0-1);
-   if(!p.chg&&(da>.3||(el.e>.6&&p.e0<.4))){p.chg=1;chg.push([p,el])}else if(p.chg&&da<.12&&el.e<.5)p.chg=0}});
- if(unb.length===1){const p=unb[0],r=Math.hypot(p.x-sun.x,p.y-sun.y),v=Math.hypot(p.vx-sun.vx,p.vy-sun.vy),ve=Math.sqrt(2*G*(sun.m+p.m)/r);
-  notify(p.name+' lepas dari tarikan Matahari: kecepatan '+(v*4.74).toFixed(1)+' km/s melebihi kecepatan lepas '+(ve*4.74).toFixed(1)+' km/s di jarak '+r.toFixed(2)+' AU. Lintasannya terbuka dan ia tidak akan kembali.','bad',14000)}
- else if(unb.length>1)notify(unb.length+' planet lepas dari tarikan Matahari: '+unb.map(p=>p.name).join(', ')+'. Lintasannya terbuka dan tidak akan kembali.','bad',14000);
- if(chg.length===1){const[p,el]=chg[0];notify('Orbit '+p.name+' berubah drastis: a '+p.a0.toFixed(2)+' → '+el.a.toFixed(2)+' AU, e '+p.e0.toFixed(2)+' → '+el.e.toFixed(2)+'.','warn')}
- else if(chg.length>1)notify(chg.length+' planet keluar dari orbit semula: '+chg.map(c=>c[0].name).join(', ')+'.','warn');
- if(back.length)notify(back.map(p=>p.name).join(', ')+' tertangkap kembali oleh gravitasi Matahari (orbit tertutup lagi).','ok')}
-// panah di tepi layar untuk planet yang sudah jauh atau terlepas
-function drawOff(){if(cam>1.05)return;const side=panelOpen()&&W>700?330:0,bot=panelOpen()&&W<=700?H*.48:0,L=14,Rr=W-side-14,T=44,B=H-bot-14;
- planets().forEach(p=>{if(p.deb||!isFinite(p.x+p.y))return;const[x,y]=bp(p);if(x>=L&&x<=Rr&&y>=T&&y<=B)return;const r=Math.hypot(p.x-sun.x,p.y-sun.y),el=elems(p);if(el.ok&&r<100)return;
-  const dx=x-cx,dy=y-cy,sx=dx>0?(Rr-cx)/dx:(L-cx)/dx,sy=dy>0?(B-cy)/dy:(T-cy)/dy,t=Math.min(Math.abs(sx),Math.abs(sy),1),px=cx+dx*t,py=cy+dy*t,an=Math.atan2(dy,dx);
-  ctx.save();ctx.translate(px,py);ctx.rotate(an);ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(-6,-6);ctx.lineTo(-6,6);ctx.closePath();ctx.fillStyle=el.ok?'#fbbf24':'#f87171';ctx.fill();ctx.restore();
-  ctx.fillStyle='#fca5a5';ctx.font='11px sans-serif';ctx.textAlign=px>cx?'right':'left';ctx.fillText(p.name+' · '+(r<10?r.toFixed(1):Math.round(r))+' AU'+(el.ok?'':' (lepas)'),px+(px>cx?-12:12),py+(py>cy?-8:16))})}
-const fnum=n=>n.toLocaleString('id-ID',{maximumSignificantDigits:3});
-function elems(p){const rx=p.x-sun.x,ry=p.y-sun.y,vx=p.vx-sun.vx,vy=p.vy-sun.vy,r=Math.hypot(rx,ry),v2=vx*vx+vy*vy,mu=G*(sun.m+p.m),E=v2/2-mu/r,d=rx*vx+ry*vy,ex=((v2-mu/r)*rx-d*vx)/mu,ey=((v2-mu/r)*ry-d*vy)/mu;
- return{a:E<0?-mu/(2*E):0,e:Math.hypot(ex,ey),w:Math.atan2(ey,ex),ok:E<0&&isFinite(E+ex+ey)}}
-// Benda bermassa besar lenyap: catat elemen orbit semua planet saat itu, lalu pantau pergeseran setelahnya
-function noteVanish(b){if(!b||b.sun||b.deb||b.m<.01*EM||!isFinite(b.x+b.y))return;const base=new Map(),inf=[];
- planets().forEach(p=>{if(p===b||p.deb)return;const el=elems(p);if(el.ok)base.set(p,el);const d=Math.hypot(p.x-b.x,p.y-b.y)||1e-9,r=Math.hypot(p.x-sun.x,p.y-sun.y)||1e-9;inf.push([p,b.m/(d*d)/(sun.m/(r*r))])});
- impact={name:b.name,t:tsim,m:b.m,base};inf.sort((x,y)=>y[1]-x[1]);const t=inf[0];
- log(b.name+' ('+fnum(b.m/EM)+'× Bumi) lenyap.'+(t?' Tarikannya tadi paling terasa di '+t[0].name+' ('+(t[1]*100).toPrecision(2)+'% dari tarikan Matahari), jadi orbit planet lain bergeser pelan. Pilih planet dan lihat panel info.':''))}
-const REF=[['Bulan',.0123],['Merkurius',.055],['Mars',.107],['Venus',.815],['Bumi',1],['Uranus',14.5],['Neptunus',17.1],['Saturnus',95.2],['Jupiter',317.8],['Matahari',333000]];
-function massCmp(m,isSun){const e=m/EM;if(!(e>0))return '';
- let t=e>=1?`<b>${fnum(e)}×</b> massa Bumi`:`<b>${(e*100).toPrecision(3)}%</b> massa Bumi (sekitar 1/${fnum(1/e)} Bumi)`;
- t+=` = ${sci(e*5.972e24)} kg (1 massa Bumi = 5,97×10²⁴ kg).`;
- let best=REF[0];REF.forEach(r=>{if(Math.abs(Math.log(e/r[1]))<Math.abs(Math.log(e/best[1])))best=r});const q=e/best[1];
- if(!isSun)t+=`<br>Paling mirip <b>${best[0]}</b> (${q>=.95&&q<=1.05?'hampir sama':'sekitar '+q.toPrecision(2)+'× massanya'}).`;
- if(isSun)t+=`<br>Setara ${fnum(m/(317.8*EM))} Jupiter.`;
- else{t+=`<br>= ${(m/sun.m*100).toPrecision(2)}% massa Matahari. `;
-  t+=e<.01?'Tergolong puing/asteroid.':e<.15?'Planet kecil, seperti Merkurius atau Mars.':e<2.5?'Planet berbatu, seperti Venus atau Bumi.':e<30?'Raksasa es, seperti Uranus atau Neptunus.':e<4100?'Raksasa gas, seperti Saturnus atau Jupiter.':'Di atas ±13 massa Jupiter: sudah bukan planet lagi (kerdil cokelat atau bintang).'}
- t+=`<br><span style="opacity:.8">Makin besar massa, makin kuat ia mengganggu orbit planet lain.</span>`;return t}
-function hLimit(){let h=.001;const n=bodies.length,s0=bodies[0];for(let i=1;i<n;i++){const b=bodies[i];if(b.deb)continue;const r=Math.max(.02,Math.hypot(b.x-s0.x,b.y-s0.y));h=Math.min(h,Math.max(2e-5,.012*Math.sqrt(r*r*r/(G*s0.m))))}for(let i=0;i<n;i++){const a=bodies[i];for(let j=i+1;j<n;j++){const b=bodies[j];if((a.deb&&b.deb)||(!a.sun&&(a.im>tsim||b.im>tsim)))continue;
- const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),v=Math.hypot(b.vx-a.vx,b.vy-a.vy)+1e-9,Rs=a.sun?RC(a)+RC(b)*.5:RC(a)+RC(b);
- if(d<Rs*8)h=Math.min(h,Math.max(2e-5,.15*Math.max(d,Rs*.5)/v))}}return h}
-let thr=false;
-function advance(yrs){let rem=yrs,it=0;const t0=performance.now();thr=false;while(rem>1e-9&&it++<20000){if((it&15)===0&&performance.now()-t0>14){thr=true;break}const h=Math.min(rem,hLimit());step(h);tsim+=h;rem-=h;if(trails)rec();if(merge())break}return yrs-rem}
-function predict(tg,im,ux,uy,nx,ny,off,vr,y){const saved=bodies,L=saved.filter(b=>!b.deb),cl=L.map(b=>({sun:b.sun,r:b.r,m:b.m,x:b.x,y:b.y,vx:b.vx,vy:b.vy,im:0})),T=cl[L.indexOf(tg)],I=cl[L.indexOf(im)];
- I.x=T.x+ux*off+nx*y;I.y=T.y+uy*off+ny*y;I.vx=T.vx-ux*vr;I.vy=T.vy-uy*vr;
- let best=1e9,sg=1,t=0;const tmax=off/vr*2.2+.05,Rs=RC(I)+RC(T);bodies=cl;
- try{while(t<tmax){const h=Math.min(hLimit(),tmax-t);step(h);t+=h;const dx=I.x-T.x,dy=I.y-T.y,d=Math.hypot(dx,dy),cr=dx*(I.vy-T.vy)-dy*(I.vx-T.vx);if(d<best){best=d;sg=Math.sign(cr)||1}if(d<Rs)return Math.abs(cr)/(Math.hypot(I.vx-T.vx,I.vy-T.vy)||1e-9)*(Math.sign(cr)||1)}}finally{bodies=saved}
- return best*sg}
-function aim(tgt,imp,bn){const Rs=RC(tgt)+RC(imp),r=Math.hypot(tgt.x-sun.x,tgt.y-sun.y),vr=impV*2*Math.PI/Math.sqrt(r),off=Math.max(.2,2.5*Rs),tv=Math.hypot(tgt.vx-sun.vx,tgt.vy-sun.vy)||1,ux=(tgt.vx-sun.vx)/tv,uy=(tgt.vy-sun.vy)/tv,nx=-uy,ny=ux,want=bn*Rs;
- let lo=-3*Rs,hi=3*Rs;{const ys=[],fs=[];for(let k=-16;k<=16;k++){ys.push(k*Rs/2);fs.push(predict(tgt,imp,ux,uy,nx,ny,off,vr,k*Rs/2))}let bk=-1;for(let k=0;k<32;k++)if(fs[k]<want&&fs[k+1]>=want&&(bk<0||Math.abs(ys[k]+ys[k+1])<Math.abs(ys[bk]+ys[bk+1])))bk=k;if(bk>=0){lo=ys[bk];hi=ys[bk+1]}}for(let i=0;i<16;i++){const m=(lo+hi)/2;if(predict(tgt,imp,ux,uy,nx,ny,off,vr,m)<want)lo=m;else hi=m}
- const y=(lo+hi)/2;aimErr=Math.abs(predict(tgt,imp,ux,uy,nx,ny,off,vr,y)-want)/Rs;imp.x=tgt.x+ux*off+nx*y;imp.y=tgt.y+uy*off+ny*y;imp.vx=tgt.vx-ux*vr;imp.vy=tgt.vy-uy*vr;imp.trail=[];tgt.trail=[];imp.im=0;tgt.im=0;setEl(imp);setEl(tgt);[imp,tgt].forEach(q=>{q.a0=q.a;q.e0=q.e;q.chg=0;q.st=q.e>=1?2:0;q.far=0})}
-function test(bn){const t=tgtO,i=impO;if(!t||!i||t===i||!bodies.includes(t)||!bodies.includes(i)){log('Pilih dua planet yang berbeda');return}aim(t,i,bn);sel=t;if(paused)$('pause').click();sync();log(i.name+' diarahkan '+(bn?'menyerempet ':'menabrak ')+t.name+(aimErr>.2?' (geometri orbit sulit, hasil bisa berbeda)':''))}
-function drawFx(now){fx=fx.filter(f=>now-f.t<1400);fx.forEach(f=>{const age=Math.max(0,Math.min(1,(now-f.t)/1400)),[x,y]=sp(f.x,f.y);ctx.globalAlpha=1-age;ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,(6+age*70)/Math.max(1,cam),0,6.283);ctx.stroke();ctx.strokeStyle='#fff';ctx.beginPath();for(let i=0;i<14;i++){const t=i*.449,r0=age*30/Math.max(1,cam),r1=age*95/Math.max(1,cam);ctx.moveTo(x+Math.cos(t)*r0,y+Math.sin(t)*r0*.6);ctx.lineTo(x+Math.cos(t)*r1,y+Math.sin(t)*r1*.6)}ctx.stroke();ctx.globalAlpha=1})}
-$('hit2').onclick=()=>{const e=bodies.find(b=>b.name==='Bumi'),v=bodies.find(b=>b.name==='Venus');if(!e||!v)return;v.x=e.x+.25;v.y=e.y+.1;v.vx=e.vx-4.5;v.vy=e.vy;v.trail=[];e.trail=[];v.im=0;e.im=0;setEl(v);sel=e;sync();log('Venus diarahkan menyerempet Bumi')};$('cine').onclick=e=>{cine=!cine;e.target.classList.toggle('on',cine)};$('szr').oninput=e=>sz=+e.target.value;$('col').onclick=e=>{frag=!frag;e.target.textContent='Tabrakan: '+(frag?'pecah':'gabung');e.target.classList.toggle('on',frag)};
-$('s_imp').onchange=e=>{const n=bodies[+e.target.value];if(!n)return;if(n===tgtO)tgtO=impO;impO=n;fillSel()};$('s_tgt').onchange=e=>{const n=bodies[+e.target.value];if(!n)return;if(n===impO)impO=tgtO;tgtO=n;fillSel()};$('hit').onclick=()=>test(0);$('hit2').onclick=()=>test(grazeB);
-$('s_v').oninput=e=>{impV=+e.target.value;$('s_vv').textContent=impV.toFixed(2)+'×'};$('s_b').oninput=e=>{grazeB=+e.target.value;$('s_bv').textContent=grazeB.toFixed(2)};const _u2=()=>{const e=bodies.find(b=>b.name==='Bumi'),v=bodies.find(b=>b.name==='Venus');if(!e||!v)return;v.x=e.x+.25;v.y=e.y;v.vx=e.vx-4.5;v.vy=e.vy;v.trail=[];e.trail=[];v.im=0;setEl(v);sel=e;sync();log('Venus diarahkan menabrak Bumi')};
-const panelOpen=()=>!$('panel').classList.contains('hide');
-function resize(){const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);layout()}
-function layout(){const side=panelOpen()&&W>700?330:0,bot=panelOpen()&&W<=700?H*.48:0;cx=(W-side)/2;cy=(H-bot)/2+(bot?0:10);
- const mA=Math.max(1,...planets().filter(p=>!p.deb).map(p=>Math.min(70,p.a*(1+p.e))));RM=Math.min((W-side)/2-18,((H-bot)/2-45)/TILT);MA=mA;S=RM/mA*zoom}
-addEventListener('resize',resize);
-const spLog=(x,y)=>{const r=Math.hypot(x,y);if(r<1e-9)return[cx,cy];let f;if(P>=1)f=r*S;else{const rmin=36*sunK()+16,rm=Math.max(rmin+30,RM*zoom);f=r<R0?rmin*r/R0:rmin+(rm-rmin)*Math.log(r/R0)/Math.log(Math.max(MA,R0*2)/R0)}return[cx+x/r*f,cy+y/r*f*TILT]};
-const bp=b=>sp(b.x-sun.x,b.y-sun.y),svr=()=>Math.max(.6,Math.min(1.5,Math.sqrt(zoom)*(W<700?.8:1))),vr=()=>svr()*sz,sunK=()=>Math.min(Math.cbrt(sun.m),2.2)*svr()*.85,R0=.3;
-// Skala tampilan "kompresi" baru: hanya memetakan jarak ke posisi layar (fisika tetap memakai jarak asli).
-// Planet dalam diberi ruang lebih lega. Kurva mulus (kubik monoton) melewati titik-titik jarak planet nyata.
-const RIN=.05,UA=[[.05,0],[.387,.130],[.723,.243],[1,.351],[1.524,.470],[5.204,.686],[9.58,.789],[19.2,.892],[30.05,1]],UX=UA.map(a=>Math.log(a[0])),UY=UA.map(a=>a[1]);
-const UM=(()=>{const n=UX.length,d=[],m=[];for(let i=0;i<n-1;i++)d.push((UY[i+1]-UY[i])/(UX[i+1]-UX[i]));m[0]=d[0];m[n-1]=d[n-2];for(let i=1;i<n-1;i++)m[i]=d[i-1]*d[i]<=0?0:2*d[i-1]*d[i]/(d[i-1]+d[i]);return m})();
-function Ufun(r){const x=Math.log(Math.max(r,1e-9)),n=UX.length;if(x<=UX[0])return 0;if(x>=UX[n-1])return 1+UM[n-1]*(x-UX[n-1]);
- let i=0;while(x>UX[i+1])i++;const h=UX[i+1]-UX[i],t=(x-UX[i])/h,t2=t*t,t3=t2*t;
- return(2*t3-3*t2+1)*UY[i]+(t3-2*t2+t)*h*UM[i]+(-2*t3+3*t2)*UY[i+1]+(t3-t2)*h*UM[i+1]}
-function fmap(r){const rmin=36*sunK()+16,rm=Math.max(rmin+30,RM*zoom);if(r<RIN)return rmin*r/RIN;if(P>.6)return rmin+(rm-rmin)*(Math.sqrt(r)-Math.sqrt(RIN))/(Math.sqrt(Math.max(MA,RIN*2))-Math.sqrt(RIN));return rmin+(rm-rmin)*Ufun(r)/Ufun(Math.max(MA,RIN*2))}
-const sp=(x,y)=>{const r=Math.hypot(x,y);if(r<1e-9)return[cx,cy];const f=P>=1?r*S:fmap(r);return[cx+x/r*f,cy+y/r*f*TILT]};
-function ppa(r){if(P>=1)return S;const a=Math.max(0,r-Math.max(5e-4,r*.01)),b=r+Math.max(5e-4,r*.01);return Math.max(1e-6,(fmap(b)-fmap(a))/(b-a))}
-const stars=Array.from({length:160},()=>({x:Math.random(),y:Math.random(),s:Math.random()*1.8+.3,a:Math.random()*.8+.2,t:Math.random()*6}));
-// ---- UI ----
-const U=()=>sel.sun?1:EM;
-function chips(){fillSel();const c=$('chips');c.innerHTML='';bodies.filter(b=>!b.deb||b===sel).forEach(b=>{const e=document.createElement('button');e.textContent=b.name;e.style.borderColor=b.color;if(b===sel)e.classList.add('on');e.onclick=()=>{sel=b;sync()};c.appendChild(e)})}
-function sync(){if(!sel||!bodies.includes(sel))sel=sun;chips();if(!sel){sel=sun}document.querySelectorAll('.psp').forEach(e=>e.style.display=sel.sun?'none':'');
- $('edt').textContent='Pengaturan: '+sel.name;$('ml').textContent=sel.sun?'Massa (M☉)':'Massa (⊕)';
- const m=$('r_mass');m.min=sel.sun?-1.3:-3;m.max=sel.sun?1.7:5.5;m.value=Math.log10(sel.m/U());$('n_mass').value=+(sel.m/U()).toPrecision(4);
- if(!sel.sun){$('f_name').value=sel.name;$('f_color').value=sel.color.length==7?sel.color:'#888888';$('r_a').value=$('n_a').value=+sel.a.toFixed(3);$('r_e').value=$('n_e').value=+sel.e.toFixed(3);$('r_r').value=$('n_r').value=+sel.r.toFixed(1)}
- info();layout()}
-function info(){rateTxt();if(!sel)return;let h;if(sel.sun)h=`Massa: <b>${(sel.m*1.989e30).toExponential(2)}</b> kg<br>= <b>${(sel.m/EM).toFixed(0)}</b> massa Bumi`;
- else{const rx=sel.x-sun.x,ry=sel.y-sun.y,vx=sel.vx-sun.vx,vy=sel.vy-sun.vy,r=Math.hypot(rx,ry),v2=vx*vx+vy*vy,mu=G*(sun.m+sel.m),E=v2/2-mu/r,hh=rx*vy-ry*vx,e=Math.sqrt(Math.max(0,1+2*E*hh*hh/(mu*mu)));
-  h=`Jarak: <b>${r.toFixed(3)}</b> AU (${fnum(r*149.598)} juta km) · Kecepatan: <b>${(Math.sqrt(v2)*4.74).toFixed(1)}</b> km/s<br>Setara di simulasi: <b>${fm(Math.sqrt(v2)*4.74*spd*curSl*31557600)}</b> km/s (${(Math.sqrt(v2)*4.74*spd*curSl*31557600/299792).toFixed(0)}× kecepatan cahaya)<br>`+(E<0?`Sumbu a: <b>${(-mu/(2*E)).toFixed(3)}</b> AU · e: <b>${e.toFixed(3)}</b><br>Periode: <b>${(2*Math.PI*Math.sqrt(Math.pow(-mu/(2*E),3)/mu)).toFixed(2)}</b> tahun${spd*curSl>0?' (di simulasi: <b>'+((2*Math.PI*Math.sqrt(Math.pow(-mu/(2*E),3)/mu))/(spd*curSl)).toFixed(1)+'</b> detik)':''}`:`<b>Lintasan terbuka (lepas dari Matahari)</b><br>Kecepatan akhir di tak hingga: <b>${(Math.sqrt(2*E)*4.74).toFixed(1)}</b> km/s · jarak <b>${r.toFixed(1)}</b> AU. Hilang dari simulasi di 800 AU, sekitar <b>${fnum(escETA(r,rx*vx+ry*vy,E,mu,hh))}</b> tahun lagi${(rx*vx+ry*vy)<0?' (masih mendekat dulu, lalu menjauh)':''}.`)+`<br>Massa: <b>${(sel.m*1.989e30).toExponential(2)}</b> kg`}
- if(!sel.sun&&impact&&impact.base.has(sel)){const b0=impact.base.get(sel),el=elems(sel);if(el.ok){let dw=(el.w-b0.w)*180/Math.PI;dw=((dw+540)%360)-180;const sg=(v,d)=>(v>=0?'+':'')+(Math.abs(v)<1e-3&&v!==0?v.toExponential(1):v.toFixed(d||4));
-  h+=`<br><span style="color:#fbbf24">Sejak ${impact.name} ${impact.act||'lenyap'} (${(tsim-impact.t).toFixed(1)} th): Δa <b>${sg(el.a-b0.a)}</b> AU · Δe <b>${sg(el.e-b0.e,5)}</b> · Δperihelion <b>${sg(dw,3)}</b>°</span>`}}
- if(!sel.sun){const pr=[],rs=Math.hypot(sel.x-sun.x,sel.y-sun.y)||1e-9;bodies.forEach(q=>{if(q===sel||q.sun||q.deb)return;const d=Math.hypot(q.x-sel.x,q.y-sel.y)||1e-9;pr.push([q,(q.m/(d*d))/(sun.m/(rs*rs))])});pr.sort((x,y)=>y[1]-x[1]);
-  if(pr.length)h+=`<br>Tarikan planet lain pada ${sel.name} (dibanding tarikan Matahari): `+pr.slice(0,2).map(x=>`<b>${x[0].name}</b> ${(x[1]*100).toPrecision(2)}%`).join(', ')}
- $('mcmp').innerHTML=massCmp(sel.m,!!sel.sun);
- $('info').innerHTML=h}
-function pair(k,fn){const s=$('r_'+k),m=$('n_'+k);const set=v=>{if(!sel||sel.sun||isNaN(v))return;fn(v);s.value=m.value=v;info();layout()};s.oninput=()=>set(+s.value);m.oninput=()=>set(+m.value)}
-pair('a',v=>orbit(sel,v,sel.e,thNow(sel)));pair('e',v=>orbit(sel,sel.a,v,thNow(sel)));pair('r',v=>sel.r=v);
-$('r_mass').oninput=e=>{if(massStart===null){massStart=sel.m;markMass(sel)}sel.m=Math.pow(10,+e.target.value)*U();$('n_mass').value=+(sel.m/U()).toPrecision(4);info()};
-$('n_mass').oninput=e=>{const v=+e.target.value;if(v>0){if(massStart===null){massStart=sel.m;markMass(sel)}sel.m=v*U();$('r_mass').value=Math.log10(v);info()}};
-$('f_name').oninput=e=>{sel.name=e.target.value;chips()};$('f_color').oninput=e=>sel.color=e.target.value;
-$('del').onclick=()=>{if(sel.sun)return;noteVanish(sel);bodies=bodies.filter(b=>b!==sel);sel=sun;sync()};
-$('add').onclick=()=>{cnt++;const ex=planets().filter(p=>!p.deb).map(p=>p.a),free=[2.6,3.6,.55,7.3,14.2,24.5,38,.28].find(a=>ex.every(b=>Math.max(a,b)/Math.min(a,b)>1.2))||Math.min(Math.max(1,...ex)*1.25,58),p={name:'Planet '+cnt,color:'#'+Math.floor(Math.random()*0x666666+0x999999).toString(16),r:6,m:EM,w:Math.random()*6.28};bodies.push(p);orbit(p,free,.05,Math.random()*6.28);setEl(p);sel=p;sync();if(paused)$('pause').click()};
-$('jup').onclick=()=>{const j=bodies.find(b=>b.name==='Jupiter');if(j){markMass(j);const o=j.m;j.m*=50;j.r*=1.3;sel=j;sync();massNote(j,o)}};
-$('r_mass').onchange=$('n_mass').onchange=()=>{if(massStart!==null){massNote(sel,massStart);massStart=null}};
-$('m50').onclick=()=>{const b=sel;if(!b)return;markMass(b);const o=b.m;b.m=b.sun?b.m*2:b.m*50;if(!b.sun)b.r*=1.3;sync();massNote(b,o)};
-$('m50d').onclick=()=>{const b=sel;if(!b)return;markMass(b);const o=b.m;b.m=b.sun?Math.max(b.m/2,.05):Math.max(b.m/50,1e-12);sync();massNote(b,o)};
-$('sun2').onclick=()=>{markMass(sun);const o=sun.m;sun.m*=2;sel=sun;sync();massNote(sun,o)};
-$('reset').onclick=()=>{init();zoom=1;$('toasts').innerHTML='';sync()};
-$('pause').onclick=e=>{paused=!paused;e.target.textContent=paused?'▶ Lanjut':'⏸ Jeda';e.target.classList.toggle('on',paused)};
-$('trails').onclick=e=>{trails=!trails;e.target.classList.toggle('on',trails)};$('ideal').onclick=e=>{ideal=!ideal;e.target.classList.toggle('on',ideal)};
-$('names').onclick=e=>{names=!names;e.target.classList.toggle('on',names)};
-const setSpd=m=>{spd=m/12;$('spdv').textContent=m>=12?(m/12).toFixed(m%12===0?0:1).replace('.',',')+' tahun/dtk':m+' bulan/dtk';rateTxt()};$('spd').oninput=e=>setSpd(+e.target.value);setSpd(1);
-$('zin').onclick=()=>{zoom=Math.min(zoom*1.25,12);layout()};$('zout').onclick=()=>{zoom=Math.max(zoom/1.25,.2);layout()};
-cv.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.2,Math.min(12,zoom*(e.deltaY<0?1.1:.9)));layout()},{passive:false});
-$('tog').onclick=()=>{$('panel').classList.toggle('hide');layout()};
-cv.addEventListener('pointerdown',e=>{if(cam>1.05)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=null,bd=1e9;
- bodies.forEach(b=>{const[px,py]=b.sun?[cx,cy]:bp(b),d=Math.hypot(px-x,py-y),rr=b.sun?24*sunK():b.r*vr();if(d<rr+12&&d<bd){bd=d;best=b}});if(best){sel=best;sync()}});
-// ---- gambar ----
-function drawP(p){const[x,y]=bp(p),w=Math.max(0,Math.min(1,(cam-1)/3)),r0=p.r*vr()/Math.max(1,cam),r=r0*(1-w)+RC(p)*ppa(Math.hypot(p.x-sun.x,p.y-sun.y))*w;
- ctx.beginPath();ctx.arc(x,y,r,0,6.283);ctx.fillStyle=p.color;ctx.fill();ctx.beginPath();ctx.arc(x-r*.25,y-r*.25,r*.85,0,6.283);ctx.fillStyle='rgba(255,255,255,.15)';ctx.fill();
- if(p===sel){ctx.beginPath();ctx.arc(x,y,r+6,0,6.283);ctx.strokeStyle='#38bdf8';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([])}
- if((names&&cam<1.3)||p===sel){ctx.fillStyle='#cbd5e1';ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillText(p.name,x,y+r+16)}}
-function drawSun(){const k=sunK(),R=45*k,g=ctx.createRadialGradient(cx,cy,3,cx,cy,R);g.addColorStop(0,'#fff');g.addColorStop(.3,'#fde047');g.addColorStop(.7,'rgba(249,115,22,.5)');g.addColorStop(1,'rgba(249,115,22,0)');
- ctx.beginPath();ctx.arc(cx,cy,R,0,6.283);ctx.fillStyle=g;ctx.fill();ctx.beginPath();ctx.arc(cx,cy,16*k,0,6.283);ctx.fillStyle='#fef08a';ctx.fill();
- if(sel===sun){ctx.beginPath();ctx.arc(cx,cy,24*k+6,0,6.283);ctx.strokeStyle='#38bdf8';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([])}
- if(names||sel===sun){ctx.fillStyle='#cbd5e1';ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillText('Matahari',cx,cy+24*k+16)}}
-function frame0(now){const dt=Math.max(0,Math.min((now-last)/1000,.1));last=now;ctx.clearRect(0,0,W,H);
- let sl=1,ct=1,tx=cx,ty=cy;
- if(cine){let dm=9,pa,pb;const nb=bodies.length;for(let i=1;i<nb;i++)for(let j=i+1;j<nb;j++){const a=bodies[i],b=bodies[j];if((a.deb&&b.deb)||a.im>tsim||b.im>tsim)continue;const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy);const Rs=RC(a)+RC(b),u=d/Rs;if(u<3&&u<dm&&(dx*(b.vx-a.vx)+dy*(b.vy-a.vy))/d<-.3){dm=u;pa=a;pb=b}}
-  if(pa){const mx=(pa.x+pb.x)/2-sun.x,my=(pa.y+pb.y)/2-sun.y,g=Math.max(0,Math.min(1,(3-dm)/2)),cg=Math.max(1,Math.min(60,16/(((RC(pa)+RC(pb))/2)*ppa(Math.hypot(mx,my)))));sl=Math.max(.04,1-.96*g*g);ct=1+(cg-1)*g;[tx,ty]=sp(mx,my)}
-  if(lastHit){const e=Math.max(0,(now-lastHit.t)/5000);if(e<1){sl=Math.min(sl,.35+.65*e*e);const c2=1+((lastHit.cam||4)-1)*(1-e);if(c2>ct){ct=c2;[tx,ty]=sp(lastHit.x,lastHit.y)}}}}
- cam+=(ct-cam)*Math.min(1,dt*5);if(ct>1.01){if(cam<1.03){fpx=tx;fpy=ty}else{fpx+=(tx-fpx)*Math.min(1,dt*6);fpy+=(ty-fpy)*Math.min(1,dt*6)}}
- curSl=sl;if(!paused){const yrs=spd*dt*sl,used=advance(yrs);fx.forEach(f=>{f.x+=(f.vx||0)*used;f.y+=(f.vy||0)*used});if(now-lastEl>250){lastEl=now;watchOrbits();planets().forEach(p=>{if(isFinite(p.x+p.y+p.vx+p.vy)&&!(p.im>tsim))setEl(p)})}}
- stars.forEach(s=>{s.t+=dt;ctx.fillStyle=`rgba(255,255,255,${s.a*(.75+.25*Math.sin(s.t*1.5+s.x*10))})`;ctx.fillRect(s.x*W,s.y*H,s.s,s.s)});
- ctx.save();if(cam>1.01){ctx.translate(fpx,fpy);ctx.scale(cam,cam);ctx.translate(-fpx,-fpy)}const ps=planets();
- if(ideal)ps.filter(p=>p.e<1&&p.a>0).forEach(p=>{ctx.beginPath();for(let i=0;i<=120;i++){const th=i/120*6.283,r=p.a*(1-p.e*p.e)/(1+p.e*Math.cos(th)),[x,y]=sp(r*Math.cos(p.w+th),r*Math.sin(p.w+th));i?ctx.lineTo(x,y):ctx.moveTo(x,y)}
-  ctx.strokeStyle=p===sel?'rgba(56,189,248,.55)':'rgba(148,163,184,.22)';ctx.lineWidth=1;ctx.stroke()});
- if(ideal&&impact&&sel&&impact.base.has(sel)){const o=impact.base.get(sel);ctx.save();ctx.setLineDash([5,5]);ctx.beginPath();for(let i=0;i<=120;i++){const th=i/120*6.283,r=o.a*(1-o.e*o.e)/(1+o.e*Math.cos(th)),[x,y]=sp(r*Math.cos(o.w+th),r*Math.sin(o.w+th));i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.strokeStyle='rgba(251,191,36,.8)';ctx.lineWidth=1.3;ctx.stroke();ctx.restore()}
- if(trails)ps.forEach(p=>{const t=p.trail,n=t.length;if(n<2)return;ctx.strokeStyle=p.color;ctx.lineWidth=2;for(let c=0;c<4;c++){const a=Math.floor(c*n/4),b=Math.min(n,Math.floor((c+1)*n/4)+1);ctx.beginPath();for(let i=a;i<b;i++){const[x,y]=sp(t[i][0],t[i][1]);i==a?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.globalAlpha=.15+c*.22;ctx.stroke()}ctx.globalAlpha=1});
- ps.filter(p=>p.y<sun.y).forEach(drawP);drawSun();ps.filter(p=>p.y>=sun.y).forEach(drawP);
- drawFx(now);ctx.restore();drawOff();$('tm').textContent='Waktu simulasi: '+tsim.toFixed(1)+' tahun'+(sl<.9?' · slow motion':'');
- if(!paused&&Math.random()<.08)info()}
-function frame(now){try{frame0(now)}catch(err){console.error(err);const d=Math.min(devicePixelRatio||1,2);ctx.setTransform(d,0,0,d,0,0);ctx.setLineDash([]);ctx.globalAlpha=1}requestAnimationFrame(frame)}
-if(innerWidth<=700)$('panel').classList.add('hide');
-init();resize();sync();requestAnimationFrame(frame);
-</script>
+<body class="mode-orbital antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header & Navigasi Utama Terpadu (3 Simulasi) -->
+  <header class="sticky top-0 z-30 border-b border-indigo-500/20 bg-slate-950/90 backdrop-blur-xl shrink-0">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 flex flex-col md:flex-row items-center justify-between gap-2.5">
+      <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-sm sm:text-base font-bold tracking-tight text-white leading-tight">Lab Virtual Fisika & Gravitasi</h1>
+            <p class="text-[11px] text-slate-400">Simulasi interaktif tata surya & konversi energi</p>
+          </div>
+        </div>
+
+        <!-- Tombol Global Pause / Lanjutkan Animasi (Khusus Tab 2 & 3) -->
+        <button id="globalPauseBtn" onclick="toggleGlobalPause()"
+          class="hidden md:hidden items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-700 text-slate-200 hover:bg-slate-800 transition">
+          <span id="pauseIconMobile">⏸</span>
+          <span id="pauseTextMobile">Jeda</span>
+        </button>
+      </div>
+
+      <!-- Navigasi Tab & Kontrol Global -->
+      <div class="flex items-center gap-2.5 w-full md:w-auto">
+        <nav class="flex flex-1 md:flex-initial p-1 rounded-2xl bg-slate-900/95 border border-slate-800 gap-1 overflow-x-auto" role="tablist">
+          <button id="btn-tab-0" onclick="switchMainTab(0)" role="tab" aria-selected="true"
+            class="flex-1 md:flex-initial px-3 sm:px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold border transition-all duration-200 flex items-center justify-center gap-1.5 whitespace-nowrap tab-active">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="3" />
+              <ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-22 12 12)" />
+            </svg>
+            <span>1. Simulasi Gravitasi</span>
+          </button>
+
+          <button id="btn-tab-1" onclick="switchMainTab(1)" role="tab" aria-selected="false"
+            class="flex-1 md:flex-initial px-3 sm:px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold border transition-all duration-200 flex items-center justify-center gap-1.5 whitespace-nowrap tab-inactive">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 6a1 1 0 100-2 1 1 0 000 2zm-3 11.5V14l-3-3 4-3 2 3h2"/>
+            </svg>
+            <span>2. Dinamo Sepeda</span>
+          </button>
+
+          <button id="btn-tab-2" onclick="switchMainTab(2)" role="tab" aria-selected="false"
+            class="flex-1 md:flex-initial px-3 sm:px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold border transition-all duration-200 flex items-center justify-center gap-1.5 whitespace-nowrap tab-inactive">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 12v9m0-9l-6-3.5M12 12l6-3.5M12 12V4m-5 17h10"/>
+            </svg>
+            <span>3. Turbin Angin</span>
+          </button>
+        </nav>
+
+        <!-- Tombol Pause / Lanjutkan Desktop (Khusus Tab 2 & 3) -->
+        <button id="globalPauseBtnDesktop" onclick="toggleGlobalPause()"
+          title="Jeda atau lanjutkan simulasi agar mudah mencatat angka"
+          class="hidden items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-700/80 text-slate-200 hover:bg-slate-800 hover:border-indigo-500/40 transition shrink-0">
+          <span id="pauseIconDesktop">⏸</span>
+          <span id="pauseTextDesktop">Jeda Simulasi</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- BAGIAN 1: ORBITAL GENESIS – SIMULASI GRAVITASI (ISI ASLI UTUH)        -->
+  <!-- ===================================================================== -->
+  <div id="sim-orbital">
+    <canvas id="c"></canvas>
+    <div id="hd"><h1>ORBITAL GENESIS</h1><div id="tm"></div><div id="lg" style="font-size:.8rem;color:#fbbf24;max-width:60vw"></div></div>
+    <div id="panel">
+      <section>
+        <h2>Kontrol</h2>
+        <div class="btns"><button id="pause">⏸ Jeda</button><button id="trails" class="on">Jejak</button><button id="ideal" class="on">Orbit ideal</button><button id="names" class="on">Nama</button><button id="col" class="on">Tabrakan: pecah</button><button id="cine" class="on">Sinema</button><button id="zin">＋</button><button id="zout">－</button></div>
+        <div class="row" style="margin-top:8px"><label>Ukuran tampil</label><input type="range" id="szr" min="0.3" max="1.5" step="0.05" value="0.75"></div><div class="row"><label title="Seberapa cepat waktu simulasi berjalan dibanding waktu nyata">Waktu</label><input type="range" id="spd" min="1" max="60" step="1" value="1" title="Kecepatan waktu simulasi: 1 bulan sampai 5 tahun per detik nyata"><span id="spdv" style="min-width:92px;text-align:right"></span></div><div id="rt" style="font-size:.74rem;color:var(--muted);line-height:1.4;margin:-2px 0 8px"></div>
+      </section>
+      <section>
+        <h2>Objek (klik di kanvas atau pilih)</h2>
+        <div class="chips" id="chips"></div>
+        <div class="btns" style="margin-top:8px"><button id="add">＋ Planet</button><button id="jup">Jupiter ×50</button><button id="sun2">Matahari ×2</button><button id="m50" title="Naikkan massa objek terpilih 50× (Matahari: 2×)">Massa ×50 (terpilih)</button><button id="m50d" title="Turunkan massa objek terpilih 50× (Matahari: 2×)">Massa ÷50 (terpilih)</button><button id="hit">Uji tabrakan</button><button id="hit2">Uji serempet</button><button class="danger psp" id="del">Hapus Objek</button><button id="reset">Reset</button></div>
+        <div class="row" style="margin-top:8px"><label>Penabrak</label><select id="s_imp" style="flex:1;background:#0b1530;color:var(--fg);border:1px solid var(--bd);border-radius:6px;padding:3px"></select></div>
+        <div class="row"><label>Sasaran</label><select id="s_tgt" style="flex:1;background:#0b1530;color:var(--fg);border:1px solid var(--bd);border-radius:6px;padding:3px"></select></div>
+        <div class="row"><label title="Kecepatan benturan sebagai kelipatan kecepatan edar sasaran. 1,0× sama dengan kecepatan orbitnya.">Kecepatan</label><input type="range" id="s_v" min="0.2" max="1.5" step="0.05" value="0.7"><span id="s_vv" style="min-width:38px;text-align:right">0.70×</span></div>
+        <div class="row"><label title="Seberapa ke tepi benturannya: 0 = tepat di tengah, mendekati 1 = hanya menyentuh sisi">Offset serempet</label><input type="range" id="s_b" min="0.4" max="0.92" step="0.01" value="0.85"><span id="s_bv" style="min-width:38px;text-align:right">0.85</span></div>
+      </section>
+      <section id="ed">
+        <h2 id="edt">Pengaturan Objek</h2>
+        <div class="row psp"><label>Nama</label><input type="text" id="f_name"><input type="color" id="f_color"></div>
+        <div class="row psp"><label title="Sumbu semi-mayor: jarak rata-rata ke Matahari. 1 AU = jarak Bumi–Matahari (±149,6 juta km)">Jarak a (AU)</label><input type="range" id="r_a" min="0.2" max="60" step="0.01"><input type="number" id="n_a" min="0.2" max="60" step="0.01"></div>
+        <div class="row psp"><label title="Seberapa lonjong orbit: 0 = lingkaran, mendekati 1 = sangat lonjong">Eksentrisitas</label><input type="range" id="r_e" min="0" max="0.95" step="0.001"><input type="number" id="n_e" min="0" max="0.95" step="0.001"></div>
+        <div class="row psp"><label title="Ukuran efektif untuk mendeteksi tabrakan (bukan ukuran sebenarnya)">Radius tabrakan</label><input type="range" id="r_r" min="2" max="40" step="0.5"><input type="number" id="n_r" min="2" max="40" step="0.5"></div>
+        <div class="row"><label id="ml" title="Massa dibandingkan massa Bumi (⊕) atau Matahari (M☉)">Massa (⊕)</label><input type="range" id="r_mass" step="0.01"><input type="number" id="n_mass" min="0.001" step="any"></div>
+        <div id="mcmp"></div>
+        <div id="info"></div>
+      </section>
+      <details id="gl"><summary>Penjelasan istilah</summary><dl>
+    <dt>AU</dt><dd>Satuan jarak: 1 AU = jarak Bumi ke Matahari (±149,6 juta km). Neptunus ±30 AU.</dd>
+    <dt>a (Jarak a)</dt><dd>Jarak rata-rata planet ke Matahari, dalam AU.</dd>
+    <dt>e (eksentrisitas)</dt><dd>Kelonjongan orbit. 0 = lingkaran, makin besar makin lonjong. Di atas 1 planet tidak kembali.</dd>
+    <dt>Perihelion dan aphelion</dt><dd>Titik orbit terdekat dan terjauh dari Matahari. Δperihelion = pergeseran titik terdekat itu.</dd>
+    <dt>Δa, Δe</dt><dd>Perubahan a dan e sejak suatu kejadian. Kecil berarti orbit hampir tidak terganggu.</dd>
+    <dt>Massa Bumi (⊕) dan Matahari (M☉)</dt><dd>1 M☉ ≈ 333.000 massa Bumi.</dd>
+    <dt>Kecepatan lepas</dt><dd>Kecepatan minimum agar lepas dari tarikan Matahari.</dd>
+    <dt>Lintasan terbuka</dt><dd>Orbit yang tidak kembali; benda menjauh selamanya sampai hilang di 800 AU.</dd>
+    <dt>Orbit ideal</dt><dd>Elips teoretis bila hanya Matahari yang menarik planet. Bergeser saat planet lain mengganggu.</dd>
+    <dt>Orbit sebelum perubahan (kuning putus-putus)</dt><dd>Orbit awal sebelum massa diubah, untuk dibandingkan dengan orbit sekarang.</dd>
+    <dt>Gaya dan percepatan</dt><dd>Massa planet naik, gayanya naik, tapi percepatannya hampir sama. Yang berubah: ayunan Matahari dan tarikan pada planet lain.</dd>
+    <dt>Gravitasi N-benda</dt><dd>Semua benda saling menarik, bukan hanya Matahari.</dd>
+    <dt>Tarikan dibanding Matahari (%)</dt><dd>Kekuatan tarikan planet lain dibanding tarikan Matahari. Kecil, tapi menggeser orbit pelan-pelan.</dd>
+    <dt>km/s dan AU/tahun</dt><dd>Satuan kecepatan. 1 AU/tahun ≈ 4,74 km/s.</dd>
+    <dt>Waktu</dt><dd>Lama waktu simulasi per 1 detik nyata (1 bulan sampai 5 tahun).</dd>
+    <dt>Sinema</dt><dd>Kamera mendekat dan waktu melambat saat dua planet hampir bertabrakan.</dd>
+    <dt>Radius tabrakan</dt><dd>Ukuran efektif benda untuk mendeteksi tabrakan.</dd>
+    <dt>Offset serempet</dt><dd>Dekat 0 = benturan tepat di tengah. Dekat 1 = hanya menyentuh sisi.</dd>
+    <dt>Kecepatan benturan</dt><dd>Kecepatan penabrak dibanding kecepatan edar sasaran. Makin cepat, makin hancur.</dd>
+    <dt>Puing</dt><dd>Pecahan hasil tabrakan; bisa jatuh ke Matahari, menyatu lagi, atau terlempar.</dd>
+    <dt>Planet Baru</dt><dd>Hasil dua planet yang bergabung.</dd>
+    </dl></details>
+    <p id="note">Simulasi gravitasi N-benda: Matahari dan semua planet saling menarik, memakai data orbit nyata dan satuan AU–tahun. Jarak di layar dikompresi agar semua planet muat (hanya tampilan, fisika tetap memakai jarak asli). Ubah massa planet atau Matahari untuk melihat orbit terganggu atau terlempar. Tabrakan bisa bergabung, hancur sebagian, atau hancur total, tergantung kecepatan benturan. Pilih penabrak dan sasaran lalu tekan Uji tabrakan atau Uji serempet. Bila planet besar dihapus, orbit planet lain bergeser pelan; lihat Δa, Δe, dan Δperihelion di panel info (percepat waktu agar terlihat). Pemberitahuan di kiri bawah muncul bila orbit berubah drastis atau planet lepas dari Matahari; panah merah menunjuk planet yang sudah jauh.</p>
+    </div>
+    <div id="toasts" role="status" aria-live="polite"></div>
+    <button id="tog">⚙ Panel</button>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- BAGIAN 2: LABORATORIUM FISIKA (DINAMO SEPEDA & TURBIN ANGIN)          -->
+  <!-- ===================================================================== -->
+  <main id="sim-lab-fisika" class="hidden max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- =================================================================== -->
+    <!-- TAB 1: SIMULASI SISTEM PENERANGAN DINAMO SEPEDA                     -->
+    <!-- =================================================================== -->
+    <section id="sim-tab-1" class="space-y-6">
+      <!-- Header Skenario Ringkas 1 Kalimat -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-l-indigo-500">
+        <div class="space-y-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+              Studi Kasus 1 • Energi Mekanik → Listrik
+            </span>
+          </div>
+          <h2 class="text-lg sm:text-xl font-bold text-white">Sistem Penerangan Dinamo Roda Sepeda</h2>
+          <p class="text-xs sm:text-sm text-slate-300">
+            Putaran roda sepeda menggerakkan dinamo untuk mengubah energi kayuhan menjadi listrik penyala lampu depan.
+          </p>
+        </div>
+      </div>
+
+      <!-- Grid Utama 2 Kolom (Desktop) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- KOLOM KIRI (7 Kolom): Kanvas Animasi + Alur Energi Step-by-Step -->
+        <div class="lg:col-span-7 space-y-5">
+
+          <!-- Kartu Kanvas Visualisasi -->
+          <div class="glass-card rounded-2xl p-3.5 sm:p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+              <!-- Badge Status Lampu yang Ramah -->
+              <div id="lamp-status-pill" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/35">
+                <span id="lamp-status-dot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="lamp-status-text" class="text-xs font-semibold text-amber-300">Terang Optimal (17.5 W)</span>
+              </div>
+
+              <!-- Petunjuk Cepat Kontekstual -->
+              <div class="flex items-center gap-2">
+                <span id="bike-quick-hint" class="hidden sm:inline-block text-[11px] text-slate-400 bg-slate-900/90 px-2.5 py-1 rounded-lg border border-slate-800">
+                  💡 Mode Otomatis aktif: roda berputar stabil
+                </span>
+                <span id="rpm-badge" class="font-mono text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-sky-300">
+                  62 RPM
+                </span>
+              </div>
+            </div>
+
+            <div class="canvas-container" id="bikeCanvasWrapper">
+              <canvas id="bikeCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- ALUR KONVERSI ENERGI STEP-BY-STEP (Kiri ke Kanan dengan Panah Visual) -->
+          <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                Alur Konversi Energi (Langkah demi Langkah)
+              </h3>
+              <span class="text-[11px] text-slate-400">Dihitung real-time</span>
+            </div>
+
+            <!-- 4 Tahap Alur Energi -->
+            <div class="grid grid-cols-1 sm:grid-cols-11 gap-2 items-stretch">
+              <!-- Langkah 1: Input Kayuhan -->
+              <div class="sm:col-span-3 p-3 rounded-xl bg-slate-900/90 border border-indigo-500/30 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400">1. Input Kayuhan</span>
+                  <div id="flowBikeStep1" class="font-mono text-lg font-bold text-white mt-0.5">25.0 W</div>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1.5">Daya mekanik (<span class="font-mono">P_mek</span>)</div>
+              </div>
+
+              <!-- Panah 1 -->
+              <div class="sm:col-span-1 flex items-center justify-center text-slate-500 py-0.5">
+                <svg class="w-5 h-5 rotate-90 sm:rotate-0 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
+
+              <!-- Langkah 2: Efisiensi Dinamo -->
+              <div class="sm:col-span-3 p-3 rounded-xl bg-slate-900/90 border border-sky-500/30 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400">2. Efisiensi Dinamo</span>
+                  <div id="flowBikeStep2" class="font-mono text-lg font-bold text-sky-300 mt-0.5">70%</div>
+                </div>
+                <div id="flowBikeLossSmall" class="text-[11px] text-rose-300/90 mt-1.5">Rugi panas: 7.5 W</div>
+              </div>
+
+              <!-- Panah 2 -->
+              <div class="sm:col-span-1 flex items-center justify-center text-slate-500 py-0.5">
+                <svg class="w-5 h-5 rotate-90 sm:rotate-0 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
+
+              <!-- Langkah 3: Listrik ke Lampu -->
+              <div class="sm:col-span-3 p-3 rounded-xl bg-gradient-to-br from-amber-500/15 to-slate-900/95 border border-amber-500/40 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400">3. Listrik Lampu</span>
+                  <div id="flowBikeStep3" class="font-mono text-lg font-bold text-amber-300 mt-0.5">17.5 W</div>
+                </div>
+                <div class="text-[11px] text-slate-300 mt-1.5">Daya output (<span class="font-mono">P_lis</span>)</div>
+              </div>
+            </div>
+
+            <!-- Langkah 4: Akumulasi Energi & Progress Bar Target 4 Menit -->
+            <div class="p-3.5 rounded-xl bg-slate-900/95 border border-emerald-500/30 space-y-2.5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400">4. Akumulasi Energi Listrik (E = P_listrik × t)</span>
+                  <div class="flex flex-wrap items-baseline gap-2 mt-0.5">
+                    <span id="metricBikeEnergyJ" class="font-mono text-xl font-bold text-white">0 J</span>
+                    <span id="metricBikeEnergyWh" class="font-mono text-xs text-emerald-300">(0.000 Wh)</span>
+                    <span class="text-xs text-slate-400">• Target 4 mnt: <strong id="metricBikeProjectedJ" class="font-mono text-slate-200">4,200 J</strong> (<span id="metricBikeProjectedWh" class="font-mono">1.17 Wh</span>)</span>
+                  </div>
+                </div>
+
+                <!-- Kontrol Waktu Cepat -->
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <span id="bikeTimerDisplay" class="font-mono text-sm font-bold px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-700 text-amber-300">00:00</span>
+                  <button onclick="setBikeTargetTime()"
+                    class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/35 transition">
+                    Hitung 4 Menit
+                  </button>
+                  <button onclick="resetBikeTimer()"
+                    class="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+                    0 dtk
+                  </button>
+                </div>
+              </div>
+
+              <!-- Progress Bar Menuju 240 Detik -->
+              <div class="space-y-1">
+                <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden p-0.5">
+                  <div id="bikeTimeProgress" class="h-full rounded-full bg-gradient-to-r from-indigo-500 via-amber-400 to-emerald-400 transition-all duration-150" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-[11px] font-mono text-slate-400">
+                  <span id="bikeSecondsDisplay">Waktu berjalan: 0.0 detik</span>
+                  <span id="bikeTargetStatus">Target soal: 4 menit (240 detik)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KOLOM KANAN (5 Kolom): Segmented Control Mode, Parameter & Collapsible Rumus -->
+        <div class="lg:col-span-5 space-y-5">
+
+          <!-- Kartu Kontrol Penggerak (Segmented Control Besar & Jelas) -->
+          <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
+            <div class="space-y-1">
+              <h3 class="text-sm sm:text-base font-bold text-white">Cara Menggerakkan Sepeda</h3>
+              <p class="text-xs text-slate-400">Pilih putaran otomatis atau kayuh pedal sendiri dengan mouse/jari</p>
+            </div>
+
+            <!-- Segmented Control Pill Besar -->
+            <div class="grid grid-cols-2 p-1.5 rounded-2xl bg-slate-950 border border-slate-800 gap-1.5" role="group" aria-label="Pilih Mode Penggerak Sepeda">
+              <button id="segAutoBtn" onclick="setBikeMode(true)"
+                class="py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+                <span>Mode Otomatis</span>
+                <span class="text-[10px] font-normal text-indigo-200">Kecepatan Konstan</span>
+              </button>
+              <button id="segManualBtn" onclick="setBikeMode(false)"
+                class="py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 text-slate-400 hover:text-slate-200 hover:bg-slate-900">
+                <span>Mode Manual</span>
+                <span class="text-[10px] font-normal opacity-80">Putar Pedal Sendiri</span>
+              </button>
+            </div>
+
+            <!-- PANEL A: Mode Otomatis (Slider Daya Mekanik + Tombol Presisi -/+) -->
+            <div id="autoControlPanel" class="pt-2 space-y-3">
+              <div class="flex justify-between items-center gap-2">
+                <label for="sliderBikePower" class="text-xs sm:text-sm font-medium text-slate-200">
+                  Tenaga Kayuhan (<span class="font-mono text-indigo-300">P_mekanik</span>)
+                </label>
+                <span id="valBikePowerAuto" class="font-mono text-base font-bold px-3 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/35">
+                  25 W
+                </span>
+              </div>
+
+              <div class="flex items-center gap-2.5">
+                <button onclick="stepBikePower(-1)" aria-label="Kurangi daya mekanik"
+                  class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-base flex items-center justify-center shrink-0 transition active:scale-95">
+                  −
+                </button>
+                <input type="range" id="sliderBikePower" min="0" max="60" step="1" value="25" oninput="updateBikeAutoPower(this.value)" />
+                <button onclick="stepBikePower(1)" aria-label="Tambah daya mekanik"
+                  class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-base flex items-center justify-center shrink-0 transition active:scale-95">
+                  +
+                </button>
+              </div>
+
+              <div class="flex justify-between text-[11px] font-mono text-slate-400 px-1">
+                <span>0 W (Berhenti)</span>
+                <span class="text-indigo-400 font-semibold">25 W (Default)</span>
+                <span>60 W (Maks)</span>
+              </div>
+            </div>
+
+            <!-- PANEL B: Mode Manual (Widget Lingkaran As Pedal Interaktif + Bar Meter Kecepatan) -->
+            <div id="manualCrankPanel" class="hidden pt-2 space-y-3.5">
+              <!-- Badge Instruksi Interaksi Visual -->
+              <div class="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/35 flex items-center gap-2.5">
+                <span class="text-base">👆</span>
+                <p class="text-xs font-medium text-amber-200">
+                  Tarik dan putar <strong>lingkaran titik biru pedal</strong> di bawah ini dengan mouse atau jari!
+                </p>
+              </div>
+
+              <div class="flex flex-col items-center justify-center py-1">
+                <canvas id="pedalCanvas" width="224" height="224" class="rounded-full bg-slate-950/95 border-2 border-indigo-500/45 shadow-xl shadow-indigo-950/50"></canvas>
+              </div>
+
+              <!-- Bar Meter Kecepatan Kayuhan & Feedback Visual -->
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="text-slate-400">Kecepatan Kayuhan Anda:</span>
+                  <span id="manualSpeedFeedback" class="font-semibold text-slate-300">Diam (0 W)</span>
+                </div>
+                <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden">
+                  <div id="manualPowerBar" class="h-full rounded-full bg-gradient-to-r from-sky-400 via-amber-400 to-rose-400 transition-all duration-75" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-500">
+                  <span>Pelan → Lampu Redup</span>
+                  <span>Cepat → Lampu Terang</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kartu Pengaturan Efisiensi Dinamo -->
+          <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-3">
+            <div class="flex justify-between items-center gap-2">
+              <div>
+                <label for="sliderBikeEff" class="text-xs sm:text-sm font-bold text-white block">
+                  Efisiensi Dinamo (<span class="font-mono text-emerald-300">η</span>)
+                </label>
+                <span class="text-[11px] text-slate-400">Persentase gerak roda yang berhasil jadi listrik</span>
+              </div>
+              <span id="valBikeEff" class="font-mono text-base font-bold px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/35">
+                70%
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+              <button onclick="stepBikeEff(-5)" aria-label="Kurangi efisiensi dinamo"
+                class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-base flex items-center justify-center shrink-0 transition active:scale-95">
+                −
+              </button>
+              <input type="range" id="sliderBikeEff" min="10" max="100" step="1" value="70" oninput="updateBikeEff(this.value)" />
+              <button onclick="stepBikeEff(5)" aria-label="Tambah efisiensi dinamo"
+                class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-base flex items-center justify-center shrink-0 transition active:scale-95">
+                +
+              </button>
+            </div>
+
+            <div class="flex justify-between text-[11px] font-mono text-slate-400 px-1">
+              <span>10% (Boros)</span>
+              <span class="text-emerald-400 font-semibold">70% (Default)</span>
+              <span>100% (Ideal)</span>
+            </div>
+          </div>
+
+          <!-- Accordion Collapsible: Detail Rumus & Substitusi Angka -->
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button onclick="toggleAccordion('bikeMathBody', 'bikeMathChevron')"
+              class="w-full px-4 sm:px-5 py-3.5 flex items-center justify-between text-left bg-slate-900/60 hover:bg-slate-900 transition">
+              <span class="text-xs sm:text-sm font-bold text-indigo-300 flex items-center gap-2">
+                <span>📐</span> Detail Rumus & Perhitungan (Untuk Tugas)
+              </span>
+              <svg id="bikeMathChevron" class="w-4 h-4 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div id="bikeMathBody" class="hidden px-4 sm:px-5 pb-4 pt-2 space-y-2.5 font-mono text-xs border-t border-slate-800/80">
+              <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1">
+                <div class="text-slate-400">1. Daya Listrik Output (<span class="text-amber-300">P_listrik = η × P_mekanik</span>):</div>
+                <div id="mathBikeP" class="text-amber-300 font-semibold">= 0.70 × 25.00 W = 17.50 Watt</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1">
+                <div class="text-slate-400">2. Energi Listrik dalam t = 4 menit (240 detik):</div>
+                <div id="mathBikeE" class="text-emerald-300 font-semibold">= 17.50 W × 240 s = 4,200 Joule (1.17 Wh)</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1">
+                <div class="text-slate-400">3. Energi Terkumpul Saat Ini (<span id="mathBikeCurT">t = 0.0 s</span>):</div>
+                <div id="mathBikeCurE" class="text-sky-300 font-semibold">= 17.50 W × 0.0 s = 0 Joule</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =================================================================== -->
+    <!-- TAB 2: SIMULASI TURBIN ANGIN SKALA KECIL PESISIR                    -->
+    <!-- =================================================================== -->
+    <section id="sim-tab-2" class="hidden space-y-6">
+      <!-- Header Skenario Ringkas 1 Kalimat -->
+      <div class="glass-card rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-l-4 border-l-sky-500">
+        <div class="space-y-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-500/15 text-sky-300 border border-sky-500/30">
+              Studi Kasus 2 • Energi Kinetik Angin → Listrik
+            </span>
+          </div>
+          <h2 class="text-lg sm:text-xl font-bold text-white">Turbin Angin Skala Kecil Daerah Pesisir</h2>
+          <p class="text-xs sm:text-sm text-slate-300">
+            Embusan angin pesisir memutar baling-baling turbin untuk memasok energi listrik bersih bagi warga pantai.
+          </p>
+        </div>
+      </div>
+
+      <!-- Grid Utama 2 Kolom (Desktop) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- KOLOM KIRI (7 Kolom): Kanvas Pesisir + Alur Energi 3 Tahap + Dampak Nyata -->
+        <div class="lg:col-span-7 space-y-5">
+
+          <!-- Kartu Kanvas Visualisasi -->
+          <div class="glass-card rounded-2xl p-3.5 sm:p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/15 border border-sky-500/35">
+                <span id="wind-status-dot" class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse"></span>
+                <span id="wind-status-text" class="text-xs font-semibold text-sky-300">Angin Pesisir Optimal (8.0 m/s)</span>
+              </div>
+              <div class="flex items-center gap-2 font-mono text-[11px]">
+                <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-slate-300">ρ = 1.2 kg/m³</span>
+                <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-teal-300">Cp = 0.30 (Tetap)</span>
+              </div>
+            </div>
+
+            <div class="canvas-container" id="windCanvasWrapper">
+              <canvas id="windCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- ALUR KONVERSI ENERGI ANGIN STEP-BY-STEP -->
+          <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                Alur Konversi Daya Angin ke Listrik
+              </h3>
+              <span class="text-[11px] text-slate-400">Perubahan v berpengaruh pangkat 3 (v³)</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-11 gap-2 items-stretch">
+              <!-- Tahap 1: Daya Kinetik Angin -->
+              <div class="sm:col-span-3 p-3.5 rounded-xl bg-slate-900/90 border border-sky-500/35 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400">1. Daya Angin Masuk</span>
+                  <div id="flowWindPower" class="font-mono text-lg font-bold text-white mt-0.5">3,686.4 W</div>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1.5">P_angin = ½ ρ A v³</div>
+              </div>
+
+              <!-- Panah 1 -->
+              <div class="sm:col-span-1 flex items-center justify-center text-slate-500 py-0.5">
+                <svg class="w-5 h-5 rotate-90 sm:rotate-0 text-teal-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
+
+              <!-- Tahap 2: Daya Mekanik Turbin -->
+              <div class="sm:col-span-3 p-3.5 rounded-xl bg-slate-900/90 border border-teal-500/35 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-teal-400">2. Ditangkap Rotor</span>
+                  <div id="flowTurbinePower" class="font-mono text-lg font-bold text-teal-300 mt-0.5">1,105.9 W</div>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1.5">Dikali Cp = 0.30 (30%)</div>
+              </div>
+
+              <!-- Panah 2 -->
+              <div class="sm:col-span-1 flex items-center justify-center text-slate-500 py-0.5">
+                <svg class="w-5 h-5 rotate-90 sm:rotate-0 text-amber-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
+
+              <!-- Tahap 3: Daya Listrik Output -->
+              <div class="sm:col-span-3 p-3.5 rounded-xl bg-gradient-to-br from-amber-500/15 to-slate-900/95 border border-amber-500/45 flex flex-col justify-between">
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400">3. Listrik Dihasilkan</span>
+                  <div id="flowElectricPower" class="font-mono text-lg font-bold text-amber-300 mt-0.5">940.0 W</div>
+                </div>
+                <div id="flowGenEffText" class="text-[11px] text-slate-300 mt-1.5">Efisiensi gen: 85%</div>
+              </div>
+            </div>
+
+            <!-- Kartu Dampak Nyata yang Ramah Awam -->
+            <div class="p-3.5 rounded-xl bg-emerald-950/35 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5">
+                <span class="text-xl">💡</span>
+                <div>
+                  <div class="text-xs font-bold text-emerald-300">Ilustrasi Manfaat Daya Listrik</div>
+                  <div id="windRealWorldImpact" class="text-xs text-slate-300">
+                    Setara menyalakan <strong>~94 lampu LED rumah (10 W)</strong> sekaligus!
+                  </div>
+                </div>
+              </div>
+              <span id="windKwBadge" class="font-mono text-xs font-bold px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 self-start sm:self-center">
+                0.94 kW
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KOLOM KANAN (5 Kolom): 3 Slider Presisi & Accordion Rumus -->
+        <div class="lg:col-span-5 space-y-5">
+
+          <!-- Panel 3 Kontrol Parameter dengan Tombol -/+ -->
+          <div class="glass-card rounded-2xl p-4 sm:p-5 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 class="text-sm sm:text-base font-bold text-white">Pengaturan Turbin Angin</h3>
+                <p class="text-[11px] text-slate-400">Geser slider atau tekan tombol − / +</p>
+              </div>
+              <span class="text-[11px] px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-500/30 font-medium">
+                3 Parameter
+              </span>
+            </div>
+
+            <!-- 1. Luas Sapuan Baling-Baling (A) -->
+            <div class="space-y-2">
+              <div class="flex justify-between items-center gap-2">
+                <div>
+                  <label for="sliderWindArea" class="text-xs sm:text-sm font-semibold text-white block">
+                    1. Luas Sapuan Baling-baling (<span class="font-mono text-sky-300">A</span>)
+                  </label>
+                  <span class="text-[11px] text-slate-400">Ukuran lingkaran putaran bilah turbin</span>
+                </div>
+                <span id="valWindArea" class="font-mono text-base font-bold px-3 py-1 rounded-xl bg-sky-500/20 text-sky-300 border border-sky-500/35">
+                  12.0 m²
+                </span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <button onclick="stepWindParam('sliderWindArea', -0.5)" aria-label="Kurangi luas sapuan"
+                  class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-base flex items-center justify-center shrink-0 transition active:scale-95">
+                  −
+                </button>
+                <input type="range" id="sliderWindArea" min="2" max="30" step="0.5" value="12" oninput="updateWindParams()" />
+                <button onclick="stepWindParam('sliderWindArea', 0.5)" aria-label="Tambah luas sapuan"
+                  class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-base flex items-center justify-center shrink-0 transition active:scale-95">
+                  +
+                </button>
+              </div>
+              <div class="flex justify-between text-[11px] font-mono text-slate-400 px-1">
+                <span>2 m² (Kecil)</span>
+                <span class="text-sky-400 font-semibold">12 m² (Default)</span>
+                <span>30 m² (Besar)</span>
+              </div>
+            </div>
+
+            <!-- 2. Kecepatan Angin (v) -->
+            <div class="space-y-2 pt-2 border-t border-slate-800/70">
+              <div class="flex justify-between items-center gap-2">
+                <div>
+                  <label for="sliderWindSpeed" class="text-xs sm:text-sm font-semibold text-white block">
+                    2. Kecepatan Angin Pesisir (<span class="font-mono text-indigo-300">v</span>)
+                  </label>
+                  <span class="text-[11px] text-slate-400">Semakin kencang, baling-baling makin cepat</span>
+                </div>
+                <span id="valWindSpeed" class="font-mono text-base font-bold px-3 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/35">
+                  8.0 m/s
+                </span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <button onclick="stepWindParam('sliderWindSpeed', -0.5)" aria-label="Kurangi kecepatan angin"
+                  class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-base flex items-center justify-center shrink-0 transition active:scale-95">
+                  −
+                </button>
+                <input type="range" id="sliderWindSpeed" min="0" max="20" step="0.5" value="8" oninput="updateWindParams()" />
+                <button onclick="stepWindParam('sliderWindSpeed', 0.5)" aria-label="Tambah kecepatan angin"
+                  class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-base flex items-center justify-center shrink-0 transition active:scale-95">
+                  +
+                </button>
+              </div>
+              <div class="flex justify-between text-[11px] font-mono text-slate-400 px-1">
+                <span>0 m/s (Tenang)</span>
+                <span class="text-indigo-400 font-semibold">8 m/s (Default)</span>
+                <span>20 m/s (Kencang)</span>
+              </div>
+            </div>
+
+            <!-- 3. Efisiensi Generator (eta_gen) -->
+            <div class="space-y-2 pt-2 border-t border-slate-800/70">
+              <div class="flex justify-between items-center gap-2">
+                <div>
+                  <label for="sliderWindEff" class="text-xs sm:text-sm font-semibold text-white block">
+                    3. Efisiensi Generator (<span class="font-mono text-amber-300">η_gen</span>)
+                  </label>
+                  <span class="text-[11px] text-slate-400">Kemampuan generator mengubah putaran jadi listrik</span>
+                </div>
+                <span id="valWindEff" class="font-mono text-base font-bold px-3 py-1 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/35">
+                  85%
+                </span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <button onclick="stepWindParam('sliderWindEff', -5)" aria-label="Kurangi efisiensi generator"
+                  class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-base flex items-center justify-center shrink-0 transition active:scale-95">
+                  −
+                </button>
+                <input type="range" id="sliderWindEff" min="10" max="100" step="1" value="85" oninput="updateWindParams()" />
+                <button onclick="stepWindParam('sliderWindEff', 5)" aria-label="Tambah efisiensi generator"
+                  class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-base flex items-center justify-center shrink-0 transition active:scale-95">
+                  +
+                </button>
+              </div>
+              <div class="flex justify-between text-[11px] font-mono text-slate-400 px-1">
+                <span>10%</span>
+                <span class="text-amber-400 font-semibold">85% (Default)</span>
+                <span>100%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accordion Collapsible: Detail Rumus & Substitusi Angka -->
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <button onclick="toggleAccordion('windMathBody', 'windMathChevron')"
+              class="w-full px-4 sm:px-5 py-3.5 flex items-center justify-between text-left bg-slate-900/60 hover:bg-slate-900 transition">
+              <span class="text-xs sm:text-sm font-bold text-sky-300 flex items-center gap-2">
+                <span>📐</span> Detail Rumus & Perhitungan (Untuk Tugas)
+              </span>
+              <svg id="windMathChevron" class="w-4 h-4 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div id="windMathBody" class="hidden px-4 sm:px-5 pb-4 pt-2 space-y-2.5 font-mono text-xs border-t border-slate-800/80">
+              <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1">
+                <div class="text-slate-400">1. Daya Kinetik Angin (<span class="text-sky-300">P_angin = ½ · ρ · A · v³</span>):</div>
+                <div id="calcWindStep1" class="text-sky-300">= 0.5 × 1.2 × 12.0 × (8.0)³</div>
+                <div id="calcWindRes1" class="text-sm font-bold text-white">= 3,686.40 Watt (3.69 kW)</div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1">
+                <div class="text-slate-400">2. Daya Mekanik Turbin (<span class="text-teal-300">P_turbin = Cp × P_angin</span>, Cp = 0.30):</div>
+                <div id="calcWindStep2" class="text-teal-300">= 0.30 × 3,686.40 W</div>
+                <div id="calcWindRes2" class="text-sm font-bold text-white">= 1,105.92 Watt (1.11 kW)</div>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-950/90 border border-amber-500/40 space-y-1">
+                <div class="text-amber-200/80">3. Daya Listrik Generator (<span class="text-amber-300">P_listrik = η_gen × P_turbin</span>):</div>
+                <div id="calcWindStep3" class="text-amber-300">= 0.85 × 1,105.92 W</div>
+                <div id="calcWindRes3" class="text-sm font-bold text-amber-300">= 940.03 Watt (0.94 kW)</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- SCRIPT 1: ORBITAL GENESIS (LOGIKA SIMULASI ASLI UTUH)                 -->
+  <!-- ===================================================================== -->
+  <script>
+  (() => {
+    let isOrbitalVisible = true;
+    const $=id=>document.getElementById(id),wrap=$('sim-orbital'),cv=$('c'),ctx=cv.getContext('2d'),G=39.478,TILT=.5,EM=3.003e-6,EPS=.004;
+    const DATA=[['Merkurius',.387,.2056,77.5,.055,'#a8a29e',4,.5],['Venus',.723,.0068,131.5,.815,'#fde047',7,2.1],['Bumi',1,.0167,102.9,1,'#38bdf8',7.5,4],['Mars',1.524,.0934,336,.107,'#f97316',5.5,1.2],['Jupiter',5.204,.0489,14.3,317.8,'#fdba74',15,5.2],['Saturnus',9.58,.0565,93.1,95.2,'#fef08a',12,3.1],['Uranus',19.2,.0472,173,14.5,'#67e8f9',9,.8],['Neptunus',30.05,.0086,48.1,17.1,'#3b82f6',8.5,2.7]];
+    let bodies,sun,sel,tsim=0,W,H,cx,cy,S=1,RM=300,MA=30,sz=.75,zoom=1,spd=1/12,paused=false,trails=true,names=true,ideal=true,P=.5,cnt=0,last=performance.now();
+    const planets=()=>bodies.filter(b=>!b.sun),thNow=p=>Math.atan2(p.y-sun.y,p.x-sun.x)-p.w;
+    function orbit(p,a,e,th){e=Math.min(.95,Math.max(0,+e||0));a=Math.max(.05,+a||1);p.a=a;p.e=e;p.a0=a;p.e0=e;p.st=0;p.far=0;p.chg=0;const mu=G*(sun.m+p.m),pp=a*(1-e*e),r=pp/(1+e*Math.cos(th)),ph=p.w+th,k=Math.sqrt(mu/pp),vr=k*e*Math.sin(th),vt=k*(1+e*Math.cos(th)),c=Math.cos(ph),s=Math.sin(ph);
+     p.x=sun.x+r*c;p.y=sun.y+r*s;p.vx=sun.vx+vr*c-vt*s;p.vy=sun.vy+vr*s+vt*c;p.trail=[];p.lt=tsim;p.T=0}
+    function init(){sun={name:'Matahari',sun:1,m:1,x:0,y:0,vx:0,vy:0,color:'#fde047'};bodies=[sun];tsim=0;impact=null;
+     DATA.forEach(d=>{const p={name:d[0],color:d[5],r:d[6],m:d[4]*EM,w:d[3]*Math.PI/180};bodies.push(p);orbit(p,d[1],d[2],d[7])});
+     let px=0,py=0;bodies.forEach(b=>{px+=b.m*b.vx;py+=b.m*b.vy});sun.vx-=px/sun.m;sun.vy-=py/sun.m;sel=bodies[3]}
+    const ax=[],ay=[];
+    function acc(){const n=bodies.length;for(let i=0;i<n;i++){ax[i]=0;ay[i]=0}
+     for(let i=0;i<n;i++){const a=bodies[i];for(let j=i+1;j<n;j++){const b=bodies[j],dx=b.x-a.x,dy=b.y-a.y,d2=dx*dx+dy*dy+EPS*EPS,f=G/(d2*Math.sqrt(d2));ax[i]+=f*b.m*dx;ay[i]+=f*b.m*dy;ax[j]-=f*a.m*dx;ay[j]-=f*a.m*dy}}}
+    function step(h){acc();bodies.forEach((b,i)=>{b.vx+=ax[i]*h/2;b.vy+=ay[i]*h/2;b.x+=b.vx*h;b.y+=b.vy*h});acc();bodies.forEach((b,i)=>{b.vx+=ax[i]*h/2;b.vy+=ay[i]*h/2})}
+    function rec(){bodies.forEach(b=>{if(b.sun||tsim-b.lt<b.T)return;b.lt=tsim;const x=b.x-sun.x,y=b.y-sun.y,r=Math.hypot(x,y);b.T=Math.pow(r,1.5)/Math.sqrt(sun.m+b.m)/260;b.trail.push([x,y]);if(b.trail.length>260)b.trail.shift()})}
+    function merge(){let ch=false;for(let i=0;i<bodies.length;i++)for(let j=i+1;j<bodies.length;j++){const a=bodies[i],b=bodies[j];if(Math.hypot(a.x-b.x,a.y-b.y)<(a.sun?RC(a)+RC(b)*.5:RC(a)+RC(b))){if(!a.sun&&(a.im>tsim||b.im>tsim))continue;if(a.sun){log(b.name+' jatuh ke Matahari');if(!b.deb)notify(b.name+' jatuh ke Matahari dan melebur.','warn');fx.push({x:b.x-sun.x,y:b.y-sun.y,t:performance.now()})}else if(frag&&smash2(a,b)){sync();return true}const M=a.m+b.m;['x','y','vx','vy'].forEach(k=>a[k]=(a[k]*a.m+b[k]*b.m)/M);if(!a.sun&&b.m>a.m){a.color=b.color;a.name=b.name}if(!a.sun)a.r=Math.cbrt(a.r**3+b.r**3);a.m=M;if(sel===b)sel=a;bodies.splice(j,1);j--;ch=true}}
+     for(let i=bodies.length-1;i>0;i--)if(!isFinite(bodies[i].x+bodies[i].y+bodies[i].vx+bodies[i].vy)||Math.hypot(bodies[i].x-sun.x,bodies[i].y-sun.y)>800){if(sel===bodies[i])sel=sun;noteVanish(bodies[i]);escNote(bodies[i]);bodies.splice(i,1);ch=true}
+     if(ch)sync();return ch}
+    let frag=true,cine=true,lastHit=null,cam=1,fpx=0,fpy=0,fx=[],lgT,curSl=1,newN=0;
+    function log(s){$('lg').textContent=s;clearTimeout(lgT);lgT=setTimeout(()=>$('lg').textContent='',7000)}
+    function setEl(p){const rx=p.x-sun.x,ry=p.y-sun.y,vx=p.vx-sun.vx,vy=p.vy-sun.vy,r=Math.hypot(rx,ry),v2=vx*vx+vy*vy,mu=G*(sun.m+p.m),E=v2/2-mu/r,d=rx*vx+ry*vy,ex=((v2-mu/r)*rx-d*vx)/mu,ey=((v2-mu/r)*ry-d*vy)/mu;p.e=Math.hypot(ex,ey);p.w=Math.atan2(ey,ex);p.a=E<0?-mu/(2*E):0;if(E>=0)p.e=2}
+    function smash(a,b){if(a.deb&&b.deb)return false;const M=a.m+b.m,mu=a.m*b.m/M,dvx=a.vx-b.vx,dvy=a.vy-b.vy,v2=dvx*dvx+dvy*dvy,R=4.26e-5*(Math.cbrt(a.m/EM)+Math.cbrt(b.m/EM)),q=(.5*mu*v2/M)/(G*M/R)/.15,X=(a.x*a.m+b.x*b.m)/M,Y=(a.y*a.m+b.y*b.m)/M,VX=(a.vx*a.m+b.vx*b.m)/M,VY=(a.vy*a.m+b.vy*b.m)/M,big=a.m>=b.m?a:b,sm=big===a?b:a,kms=(Math.sqrt(v2)*4.74).toFixed(1);
+     lastHit={x:X-sun.x,y:Y-sun.y,vx:VX-sun.vx,vy:VY-sun.vy,t:performance.now()};fx.push(lastHit);
+     if(q<1||bodies.length>70){log(a.name+' bergabung dengan '+b.name+' (benturan '+kms+' km/s)');return false}
+     const mr=q>=5?0:big.m*(1-.2*(q-1)),n=q>=5?6:4,w=Array.from({length:n},()=>.5+Math.random()),ws=w.reduce((s,x)=>s+x,0),vk=.8*Math.sqrt(v2),off=Math.random()*6.28,nb=[];
+     bodies=bodies.filter(x=>x!==a&&x!==b);
+     if(mr>0){const p={name:big.name,color:big.color,r:big.r*Math.cbrt(mr/big.m),m:mr,x:X,y:Y,vx:VX,vy:VY,trail:[],lt:tsim,T:0,im:tsim+.03};setEl(p);nb.push(p)}
+     for(let i=0;i<n;i++){const th=off+i*6.283/n,c=Math.cos(th),s=Math.sin(th),kk=vk*(.5+Math.random()),m=(M-mr)*w[i]/ws,p={name:'Puing',deb:1,color:i%2?big.color:sm.color,r:Math.max(1.5,Math.cbrt((a.r**3+b.r**3)*m/M)*1.2),m,x:X+.02*c,y:Y+.02*s,vx:VX+kk*c,vy:VY+kk*s,trail:[],lt:tsim,T:0,im:tsim+.03};setEl(p);nb.push(p)}
+     bodies.push(...nb);if(sel===a||sel===b)sel=nb[0]||sun;
+     log(a.name+' menabrak '+b.name+' ('+kms+' km/s): '+(mr>0?'hancur sebagian, sisa '+big.name+' + '+n+' puing':'hancur total menjadi '+n+' puing'));return true}
+    function RC(p){return p.sun?.04:p.r*.008}
+    function ppaLog(r){if(P>=1)return S;const rmin=36*sunK()+16,rm=Math.max(rmin+30,RM*zoom);return r<R0?rmin/R0:(rm-rmin)/Math.log(Math.max(MA,R0*2)/R0)/Math.max(r,R0)}
+    function fm(n){return n>=1e9?(n/1e9).toFixed(2)+' miliar':n>=1e6?(n/1e6).toFixed(2)+' juta':n>=1e3?(n/1e3).toFixed(1)+' ribu':n.toFixed(1)}
+    function rateTxt(){const k=spd*curSl;$('rt').innerHTML='1 detik nyata = <b>'+(k>=2?k.toFixed(2)+' tahun':(k*12).toFixed(2)+' bulan')+'</b> simulasi, yaitu <b>'+fm(k*31557600)+'×</b> lebih cepat dari waktu nyata'+(curSl<.9?' (sedang slow motion)':'')+(thr?' (dibatasi kemampuan perangkat, waktu berjalan lebih lambat dari angka ini)':'')}
+    function mix(c1,c2,w){const h=c=>/^#[0-9a-f]{6}$/i.test(c)?[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)):null,x=h(c1),y=h(c2);if(!x||!y)return c1;return '#'+x.map((v,i)=>Math.round(v*(1-w)+y[i]*w).toString(16).padStart(2,'0')).join('')}
+    function smash2(a,b){if(a.deb||b.deb||bodies.length>66)return false;
+     const M=a.m+b.m,mu=a.m*b.m/M,dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1e-9,dvx=b.vx-a.vx,dvy=b.vy-a.vy,v2=dvx*dvx+dvy*dvy,v=Math.sqrt(v2)||1e-9,Rs=RC(a)+RC(b),bn=Math.min(1,Math.abs(dx*dvy-dy*dvx)/v/Rs),
+      R=4.26e-5*(Math.cbrt(a.m/EM)+Math.cbrt(b.m/EM)),q=(.5*mu*v2/M)/(G*M/R)/.15,kms=(v*4.74).toFixed(1),
+      X=(a.x*a.m+b.x*b.m)/M,Y=(a.y*a.m+b.y*b.m)/M,VX=(a.vx*a.m+b.vx*b.m)/M,VY=(a.vy*a.m+b.vy*b.m)/M,big=a.m>=b.m?a:b,sm=big===a?b:a,nb=[],ro=Rs*.6+.03;
+     lastHit={x:X-sun.x,y:Y-sun.y,vx:VX-sun.vx,vy:VY-sun.vy,t:performance.now(),cam:Math.max(1,Math.min(60,16/((Rs/2)*ppa(Math.hypot(X-sun.x,Y-sun.y)))))};fx.push(lastHit);
+     const burst=(col,m,n,x,y,vx,vy,kv,rr)=>{const w=Array.from({length:n},()=>.6+.8*Math.random()),ws=w.reduce((s,t)=>s+t,0),off=Math.random()*6.28;for(let i=0;i<n;i++){const th=off+i*6.283/n,c=Math.cos(th),s=Math.sin(th),k=kv*(.5+Math.random()),mm=m*w[i]/ws,p={name:'Puing',deb:1,color:col,r:Math.max(1.5,Math.cbrt(mm/EM)*2.8),m:mm,x:x+rr*c,y:y+rr*s,vx:vx+k*c,vy:vy+k*s,trail:[],lt:tsim,T:0,im:tsim+.1};setEl(p);nb.push(p)}};
+     if(bn>=.75){const f=Math.max(.04,Math.min(.25,.04+.04*q)),nx=dx/d,ny=dy/d,px=a.x+nx*RC(a),py=a.y+ny*RC(a),ma=a.m*f,mb=b.m*f;
+      burst(a.color,ma,2,px,py,VX,VY,.5*v,.03);burst(b.color,mb,2,px,py,VX,VY,.5*v,.03);
+      a.m-=ma;b.m-=mb;a.r*=Math.cbrt(1-f);b.r*=Math.cbrt(1-f);
+      const vn=dvx*nx+dvy*ny;if(vn<0){const J=-1.3*vn*a.m*b.m/(a.m+b.m);a.vx-=J/a.m*nx;a.vy-=J/a.m*ny;b.vx+=J/b.m*nx;b.vy+=J/b.m*ny}
+      const gap=Rs*1.1-d;if(gap>0){const t=a.m+b.m;a.x-=nx*gap*b.m/t;a.y-=ny*gap*b.m/t;b.x+=nx*gap*a.m/t;b.y+=ny*gap*a.m/t}
+      a.im=b.im=tsim+.1;a.trail=[];b.trail=[];setEl(a);setEl(b);bodies.push(...nb);
+      log(a.name+' menyerempet '+b.name+' ('+kms+' km/s): pecah sebagian, masing-masing kehilangan '+(f*100).toFixed(0)+'% massa');return true}
+     if(bn>=.4){const keep=.25*sm.m,lose=.08*big.m,m0=big.m;
+      burst(sm.color,.75*sm.m,4,X,Y,VX,VY,.9*v,ro);burst(big.color,lose,2,X,Y,VX,VY,.7*v,ro);
+      big.vx=(big.vx*m0+sm.vx*keep)/(m0+keep);big.vy=(big.vy*m0+sm.vy*keep)/(m0+keep);big.m=m0-lose+keep;big.r=Math.cbrt(big.r**3+.25*sm.r**3)*.97;big.im=tsim+.1;big.trail=[];setEl(big);
+      bodies=bodies.filter(x=>x!==sm);bodies.push(...nb);if(sel===sm)sel=big;
+      log(sm.name+' menabrak '+big.name+' dari samping ('+kms+' km/s): '+sm.name+' hancur jadi 4 puing, '+big.name+' bertahan');return true}
+     const df=q>=15?1:Math.min(.6,.08+.04*q),mr=M*(1-df),dm=M-mr,n=q>=15?7:5;let p=null;
+     bodies=bodies.filter(x=>x!==a&&x!==b);
+     if(mr>0){p={name:'Planet Baru '+(++newN),color:mix(big.color,sm.color,sm.m/M),r:Math.cbrt(a.r**3+b.r**3)*.95,m:mr,x:X,y:Y,vx:VX,vy:VY,trail:[],lt:tsim,T:0,im:tsim+.1};setEl(p);nb.push(p)}
+     if(dm>0){burst(big.color,dm*.55,Math.ceil(n/2),X,Y,VX,VY,.9*v,ro);burst(sm.color,dm*.45,Math.floor(n/2),X,Y,VX,VY,.9*v,ro)}
+     bodies.push(...nb);if(sel===a||sel===b)sel=p||sun;
+     log(a.name+' menabrak '+b.name+' penuh ('+kms+' km/s): '+(p?'pecah lalu bergabung menjadi '+p.name+' + '+n+' puing':'meledak total menjadi '+n+' puing'));return true}
+    let impO=null,tgtO=null;
+    function fillSel(){const L=bodies.filter(b=>!b.sun&&!b.deb);if(L.length<2){['s_imp','s_tgt'].forEach(id=>$(id).innerHTML='');return}if(!tgtO||!bodies.includes(tgtO))tgtO=L.find(b=>b.name==='Bumi')||L[0];if(!impO||!bodies.includes(impO)||impO===tgtO)impO=L.find(b=>b!==tgtO&&b.name==='Venus')||L.find(b=>b!==tgtO);
+     ['s_imp','s_tgt'].forEach(id=>{const s=$(id),cur=id==='s_imp'?impO:tgtO;s.innerHTML='';L.forEach(b=>{const o=document.createElement('option');o.value=bodies.indexOf(b);o.textContent=b.name;if(b===cur)o.selected=true;s.appendChild(o)})})}
+    function trial(tgt,ux,uy,nx,ny,off,vr,y){let tx=tgt.x-sun.x,ty=tgt.y-sun.y,tvx=tgt.vx-sun.vx,tvy=tgt.vy-sun.vy,ix=tx+ux*off+nx*y,iy=ty+uy*off+ny*y,ivx=tvx-ux*vr,ivy=tvy-uy*vr,h=.0004,best=9,sg=1;const GM=G*sun.m;
+     for(let t=0;t<off/vr*2.2;t+=h){let r=Math.hypot(tx,ty),f=GM/(r*r*r);tvx-=f*tx*h;tvy-=f*ty*h;tx+=tvx*h;ty+=tvy*h;r=Math.hypot(ix,iy);f=GM/(r*r*r);ivx-=f*ix*h;ivy-=f*iy*h;ix+=ivx*h;iy+=ivy*h;const rx=ix-tx,ry=iy-ty,d=Math.hypot(rx,ry);if(d<best){best=d;sg=Math.sign(rx*(ivy-tvy)-ry*(ivx-tvx))||1}}
+     return best*sg}
+    let impV=.7,grazeB=.85,aimErr=0,impact=null,lastEl=0;
+    const sci=x=>{const[m,e]=x.toExponential(2).split('e'),sp='⁰¹²³⁴⁵⁶⁷⁸⁹';return m.replace('.',',')+'×10'+(e[0]=='-'?'⁻':'')+[...e.replace(/[+-]/,'')].map(c=>sp[+c]).join('')};
+    let escN=0,escT=0,baryOn=true,massStart=null;
+    const fkm=au=>{const km=au*149597870.7;return km<1e6?fnum(km)+' km':fnum(km/1e6)+' juta km'};
+    function markMass(b){if(!b||(impact&&impact.kind==='massa'&&impact.ref===b))return;const base=new Map();planets().forEach(p=>{if(p.deb)return;const el=elems(p);if(el.ok)base.set(p,el)});impact={name:'massa '+b.name,act:'diubah',kind:'massa',ref:b,t:tsim,m:b.m,base}}
+    function massNote(b,old){if(!b||!(old>0)||Math.abs(b.m/old-1)<.02)return;const dm=b.m-old,inf=[];
+     if(!b.sun)planets().forEach(p=>{if(p===b||p.deb)return;const d=Math.hypot(p.x-b.x,p.y-b.y)||1e-9,r=Math.hypot(p.x-sun.x,p.y-sun.y)||1e-9;inf.push([p,Math.abs(dm)/(d*d)/(sun.m/(r*r))])});
+     inf.sort((x,y)=>y[1]-x[1]);const k=b.m/old;let t='Massa '+b.name+(k>=1?' naik ':' turun ')+fnum(k>=1?k:1/k)+'×.';
+     if(inf.length)t+=' Perubahan tarikan paling terasa di '+inf.slice(0,2).map(x=>x[0].name+' ('+(x[1]*100).toPrecision(2)+'% dari tarikan Matahari)').join(' dan ')+'.';
+     else if(b.sun)t+=' Semua planet merasakannya: orbitnya akan berubah.';
+     t+=' Dampak pada planet lain muncul pelan. Lihat Δ orbit di panel info dan garis kuning putus-putus (orbit sebelum perubahan).';notify(t,'ok',13000)}
+    function baryOff(){let X=0,Y=0,M=0;bodies.forEach(b=>{X+=b.m*b.x;Y+=b.m*b.y;M+=b.m});if(!(M>0))return[0,0,0];const dx=X/M-sun.x,dy=Y/M-sun.y;return[dx,dy,Math.hypot(dx,dy)]}
+    function escETA(r,rd,E,mu,hh){const vr2=q=>2*(E+mu/q)-hh*hh/(q*q),seg=(a,b)=>{const N=400;let s=0;for(let k=0;k<N;k++){const u=(k+.5)/N,q=a+(b-a)*u*u,v=Math.sqrt(Math.max(vr2(Math.max(q,.02)),1e-8));s+=2*(b-a)*u/N/v}return s};
+     if(r>=800)return 0;if(rd<0){const rp=Math.min(r,hh*hh/(mu+Math.sqrt(mu*mu+2*E*hh*hh)));return seg(rp,r)+seg(rp,800)}return seg(r,800)}
+    function notify(t,kind,ms){const c=$('toasts');if(!c)return;const e=document.createElement('div');e.className='toast '+(kind||'warn');e.textContent=t;c.appendChild(e);while(c.children.length>4)c.removeChild(c.firstChild);setTimeout(()=>{e.style.opacity=0;setTimeout(()=>e.remove(),650)},ms||10000)}
+    function escNote(b){if(!b||b.sun||!isFinite(b.x+b.y+b.vx+b.vy))return;
+     if(b.deb){escN++;clearTimeout(escT);escT=setTimeout(()=>{notify(escN+' puing terlempar keluar dari tata surya (>800 AU) dan menghilang dari simulasi.','warn');escN=0},400);return}
+     notify(b.name+' keluar dari jangkauan tata surya (>800 AU), tidak terlihat lagi dan menghilang dari simulasi.','bad',14000)}
+    function watchOrbits(){const unb=[],chg=[],back=[];
+     planets().forEach(p=>{if(p.deb||!isFinite(p.x+p.y+p.vx+p.vy)||p.im>tsim)return;const el=elems(p),r=Math.hypot(p.x-sun.x,p.y-sun.y);
+      if(p.a0===undefined){p.a0=el.ok?el.a:r;p.e0=el.ok?el.e:0;p.st=el.ok?0:2;p.far=0;p.chg=0}
+      if(!el.ok){if(p.st!==2){p.st=2;unb.push(p)}
+       for(const T of [50,200,500])if(r>T&&p.far<T){p.far=T;notify(p.name+' sudah '+T+' AU dari Matahari dan terus menjauh. Di 800 AU ia hilang dari simulasi.','warn')}}
+      else{if(p.st===2){p.st=0;p.far=0;back.push(p)}
+       const da=Math.abs(el.a/p.a0-1);
+       if(!p.chg&&(da>.3||(el.e>.6&&p.e0<.4))){p.chg=1;chg.push([p,el])}else if(p.chg&&da<.12&&el.e<.5)p.chg=0}});
+     if(unb.length===1){const p=unb[0],r=Math.hypot(p.x-sun.x,p.y-sun.y),v=Math.hypot(p.vx-sun.vx,p.vy-sun.vy),ve=Math.sqrt(2*G*(sun.m+p.m)/r);
+      notify(p.name+' lepas dari tarikan Matahari: kecepatan '+(v*4.74).toFixed(1)+' km/s melebihi kecepatan lepas '+(ve*4.74).toFixed(1)+' km/s di jarak '+r.toFixed(2)+' AU. Lintasannya terbuka dan ia tidak akan kembali.','bad',14000)}
+     else if(unb.length>1)notify(unb.length+' planet lepas dari tarikan Matahari: '+unb.map(p=>p.name).join(', ')+'. Lintasannya terbuka dan tidak akan kembali.','bad',14000);
+     if(chg.length===1){const[p,el]=chg[0];notify('Orbit '+p.name+' berubah drastis: a '+p.a0.toFixed(2)+' → '+el.a.toFixed(2)+' AU, e '+p.e0.toFixed(2)+' → '+el.e.toFixed(2)+'.','warn')}
+     else if(chg.length>1)notify(chg.length+' planet keluar dari orbit semula: '+chg.map(c=>c[0].name).join(', ')+'.','warn');
+     if(back.length)notify(back.map(p=>p.name).join(', ')+' tertangkap kembali oleh gravitasi Matahari (orbit tertutup lagi).','ok')}
+    function drawOff(){if(cam>1.05)return;const side=panelOpen()&&W>700?330:0,bot=panelOpen()&&W<=700?H*.48:0,L=14,Rr=W-side-14,T=44,B=H-bot-14;
+     planets().forEach(p=>{if(p.deb||!isFinite(p.x+p.y))return;const[x,y]=bp(p);if(x>=L&&x<=Rr&&y>=T&&y<=B)return;const r=Math.hypot(p.x-sun.x,p.y-sun.y),el=elems(p);if(el.ok&&r<100)return;
+      const dx=x-cx,dy=y-cy,sx=dx>0?(Rr-cx)/dx:(L-cx)/dx,sy=dy>0?(B-cy)/dy:(T-cy)/dy,t=Math.min(Math.abs(sx),Math.abs(sy),1),px=cx+dx*t,py=cy+dy*t,an=Math.atan2(dy,dx);
+      ctx.save();ctx.translate(px,py);ctx.rotate(an);ctx.beginPath();ctx.moveTo(8,0);ctx.lineTo(-6,-6);ctx.lineTo(-6,6);ctx.closePath();ctx.fillStyle=el.ok?'#fbbf24':'#f87171';ctx.fill();ctx.restore();
+      ctx.fillStyle='#fca5a5';ctx.font='11px sans-serif';ctx.textAlign=px>cx?'right':'left';ctx.fillText(p.name+' · '+(r<10?r.toFixed(1):Math.round(r))+' AU'+(el.ok?'':' (lepas)'),px+(px>cx?-12:12),py+(py>cy?-8:16))})}
+    const fnum=n=>n.toLocaleString('id-ID',{maximumSignificantDigits:3});
+    function elems(p){const rx=p.x-sun.x,ry=p.y-sun.y,vx=p.vx-sun.vx,vy=p.vy-sun.vy,r=Math.hypot(rx,ry),v2=vx*vx+vy*vy,mu=G*(sun.m+p.m),E=v2/2-mu/r,d=rx*vx+ry*vy,ex=((v2-mu/r)*rx-d*vx)/mu,ey=((v2-mu/r)*ry-d*vy)/mu;
+     return{a:E<0?-mu/(2*E):0,e:Math.hypot(ex,ey),w:Math.atan2(ey,ex),ok:E<0&&isFinite(E+ex+ey)}}
+    function noteVanish(b){if(!b||b.sun||b.deb||b.m<.01*EM||!isFinite(b.x+b.y))return;const base=new Map(),inf=[];
+     planets().forEach(p=>{if(p===b||p.deb)return;const el=elems(p);if(el.ok)base.set(p,el);const d=Math.hypot(p.x-b.x,p.y-b.y)||1e-9,r=Math.hypot(p.x-sun.x,p.y-sun.y)||1e-9;inf.push([p,b.m/(d*d)/(sun.m/(r*r))])});
+     impact={name:b.name,t:tsim,m:b.m,base};inf.sort((x,y)=>y[1]-x[1]);const t=inf[0];
+     log(b.name+' ('+fnum(b.m/EM)+'× Bumi) lenyap.'+(t?' Tarikannya tadi paling terasa di '+t[0].name+' ('+(t[1]*100).toPrecision(2)+'% dari tarikan Matahari), jadi orbit planet lain bergeser pelan. Pilih planet dan lihat panel info.':''))}
+    const REF=[['Bulan',.0123],['Merkurius',.055],['Mars',.107],['Venus',.815],['Bumi',1],['Uranus',14.5],['Neptunus',17.1],['Saturnus',95.2],['Jupiter',317.8],['Matahari',333000]];
+    function massCmp(m,isSun){const e=m/EM;if(!(e>0))return '';
+     let t=e>=1?`<b>${fnum(e)}×</b> massa Bumi`:`<b>${(e*100).toPrecision(3)}%</b> massa Bumi (sekitar 1/${fnum(1/e)} Bumi)`;
+     t+=` = ${sci(e*5.972e24)} kg (1 massa Bumi = 5,97×10²⁴ kg).`;
+     let best=REF[0];REF.forEach(r=>{if(Math.abs(Math.log(e/r[1]))<Math.abs(Math.log(e/best[1])))best=r});const q=e/best[1];
+     if(!isSun)t+=`<br>Paling mirip <b>${best[0]}</b> (${q>=.95&&q<=1.05?'hampir sama':'sekitar '+q.toPrecision(2)+'× massanya'}).`;
+     if(isSun)t+=`<br>Setara ${fnum(m/(317.8*EM))} Jupiter.`;
+     else{t+=`<br>= ${(m/sun.m*100).toPrecision(2)}% massa Matahari. `;
+      t+=e<.01?'Tergolong puing/asteroid.':e<.15?'Planet kecil, seperti Merkurius atau Mars.':e<2.5?'Planet berbatu, seperti Venus atau Bumi.':e<30?'Raksasa es, seperti Uranus atau Neptunus.':e<4100?'Raksasa gas, seperti Saturnus atau Jupiter.':'Di atas ±13 massa Jupiter: sudah bukan planet lagi (kerdil cokelat atau bintang).'}
+     t+=`<br><span style="opacity:.8">Makin besar massa, makin kuat ia mengganggu orbit planet lain.</span>`;return t}
+    function hLimit(){let h=.001;const n=bodies.length,s0=bodies[0];for(let i=1;i<n;i++){const b=bodies[i];if(b.deb)continue;const r=Math.max(.02,Math.hypot(b.x-s0.x,b.y-s0.y));h=Math.min(h,Math.max(2e-5,.012*Math.sqrt(r*r*r/(G*s0.m))))}for(let i=0;i<n;i++){const a=bodies[i];for(let j=i+1;j<n;j++){const b=bodies[j];if((a.deb&&b.deb)||(!a.sun&&(a.im>tsim||b.im>tsim)))continue;
+     const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),v=Math.hypot(b.vx-a.vx,b.vy-a.vy)+1e-9,Rs=a.sun?RC(a)+RC(b)*.5:RC(a)+RC(b);
+     if(d<Rs*8)h=Math.min(h,Math.max(2e-5,.15*Math.max(d,Rs*.5)/v))}}return h}
+    let thr=false;
+    function advance(yrs){let rem=yrs,it=0;const t0=performance.now();thr=false;while(rem>1e-9&&it++<20000){if((it&15)===0&&performance.now()-t0>14){thr=true;break}const h=Math.min(rem,hLimit());step(h);tsim+=h;rem-=h;if(trails)rec();if(merge())break}return yrs-rem}
+    function predict(tg,im,ux,uy,nx,ny,off,vr,y){const saved=bodies,L=saved.filter(b=>!b.deb),cl=L.map(b=>({sun:b.sun,r:b.r,m:b.m,x:b.x,y:b.y,vx:b.vx,vy:b.vy,im:0})),T=cl[L.indexOf(tg)],I=cl[L.indexOf(im)];
+     I.x=T.x+ux*off+nx*y;I.y=T.y+uy*off+ny*y;I.vx=T.vx-ux*vr;I.vy=T.vy-uy*vr;
+     let best=1e9,sg=1,t=0;const tmax=off/vr*2.2+.05,Rs=RC(I)+RC(T);bodies=cl;
+     try{while(t<tmax){const h=Math.min(hLimit(),tmax-t);step(h);t+=h;const dx=I.x-T.x,dy=I.y-T.y,d=Math.hypot(dx,dy),cr=dx*(I.vy-T.vy)-dy*(I.vx-T.vx);if(d<best){best=d;sg=Math.sign(cr)||1}if(d<Rs)return Math.abs(cr)/(Math.hypot(I.vx-T.vx,I.vy-T.vy)||1e-9)*(Math.sign(cr)||1)}}finally{bodies=saved}
+     return best*sg}
+    function aim(tgt,imp,bn){const Rs=RC(tgt)+RC(imp),r=Math.hypot(tgt.x-sun.x,tgt.y-sun.y),vr=impV*2*Math.PI/Math.sqrt(r),off=Math.max(.2,2.5*Rs),tv=Math.hypot(tgt.vx-sun.vx,tgt.vy-sun.vy)||1,ux=(tgt.vx-sun.vx)/tv,uy=(tgt.vy-sun.vy)/tv,nx=-uy,ny=ux,want=bn*Rs;
+     let lo=-3*Rs,hi=3*Rs;{const ys=[],fs=[];for(let k=-16;k<=16;k++){ys.push(k*Rs/2);fs.push(predict(tgt,imp,ux,uy,nx,ny,off,vr,k*Rs/2))}let bk=-1;for(let k=0;k<32;k++)if(fs[k]<want&&fs[k+1]>=want&&(bk<0||Math.abs(ys[k]+ys[k+1])<Math.abs(ys[bk]+ys[bk+1])))bk=k;if(bk>=0){lo=ys[bk];hi=ys[bk+1]}}for(let i=0;i<16;i++){const m=(lo+hi)/2;if(predict(tgt,imp,ux,uy,nx,ny,off,vr,m)<want)lo=m;else hi=m}
+     const y=(lo+hi)/2;aimErr=Math.abs(predict(tgt,imp,ux,uy,nx,ny,off,vr,y)-want)/Rs;imp.x=tgt.x+ux*off+nx*y;imp.y=tgt.y+uy*off+ny*y;imp.vx=tgt.vx-ux*vr;imp.vy=tgt.vy-uy*vr;imp.trail=[];tgt.trail=[];imp.im=0;tgt.im=0;setEl(imp);setEl(tgt);[imp,tgt].forEach(q=>{q.a0=q.a;q.e0=q.e;q.chg=0;q.st=q.e>=1?2:0;q.far=0})}
+    function test(bn){const t=tgtO,i=impO;if(!t||!i||t===i||!bodies.includes(t)||!bodies.includes(i)){log('Pilih dua planet yang berbeda');return}aim(t,i,bn);sel=t;if(paused)$('pause').click();sync();log(i.name+' diarahkan '+(bn?'menyerempet ':'menabrak ')+t.name+(aimErr>.2?' (geometri orbit sulit, hasil bisa berbeda)':''))}
+    function drawFx(now){fx=fx.filter(f=>now-f.t<1400);fx.forEach(f=>{const age=Math.max(0,Math.min(1,(now-f.t)/1400)),[x,y]=sp(f.x,f.y);ctx.globalAlpha=1-age;ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,(6+age*70)/Math.max(1,cam),0,6.283);ctx.stroke();ctx.strokeStyle='#fff';ctx.beginPath();for(let i=0;i<14;i++){const t=i*.449,r0=age*30/Math.max(1,cam),r1=age*95/Math.max(1,cam);ctx.moveTo(x+Math.cos(t)*r0,y+Math.sin(t)*r0*.6);ctx.lineTo(x+Math.cos(t)*r1,y+Math.sin(t)*r1*.6)}ctx.stroke();ctx.globalAlpha=1})}
+    $('hit2').onclick=()=>{const e=bodies.find(b=>b.name==='Bumi'),v=bodies.find(b=>b.name==='Venus');if(!e||!v)return;v.x=e.x+.25;v.y=e.y+.1;v.vx=e.vx-4.5;v.vy=e.vy;v.trail=[];e.trail=[];v.im=0;e.im=0;setEl(v);sel=e;sync();log('Venus diarahkan menyerempet Bumi')};$('cine').onclick=e=>{cine=!cine;e.target.classList.toggle('on',cine)};$('szr').oninput=e=>sz=+e.target.value;$('col').onclick=e=>{frag=!frag;e.target.textContent='Tabrakan: '+(frag?'pecah':'gabung');e.target.classList.toggle('on',frag)};
+    $('s_imp').onchange=e=>{const n=bodies[+e.target.value];if(!n)return;if(n===tgtO)tgtO=impO;impO=n;fillSel()};$('s_tgt').onchange=e=>{const n=bodies[+e.target.value];if(!n)return;if(n===impO)impO=tgtO;tgtO=n;fillSel()};$('hit').onclick=()=>test(0);$('hit2').onclick=()=>test(grazeB);
+    $('s_v').oninput=e=>{impV=+e.target.value;$('s_vv').textContent=impV.toFixed(2)+'×'};$('s_b').oninput=e=>{grazeB=+e.target.value;$('s_bv').textContent=grazeB.toFixed(2)};const _u2=()=>{const e=bodies.find(b=>b.name==='Bumi'),v=bodies.find(b=>b.name==='Venus');if(!e||!v)return;v.x=e.x+.25;v.y=e.y;v.vx=e.vx-4.5;v.vy=e.vy;v.trail=[];e.trail=[];v.im=0;setEl(v);sel=e;sync();log('Venus diarahkan menabrak Bumi')};
+    const panelOpen=()=>!$('panel').classList.contains('hide');
+    function resize(){const d=Math.min(devicePixelRatio||1,2);W=wrap.clientWidth||innerWidth;H=wrap.clientHeight||innerHeight;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);layout()}
+    function layout(){const side=panelOpen()&&W>700?330:0,bot=panelOpen()&&W<=700?H*.48:0;cx=(W-side)/2;cy=(H-bot)/2+(bot?0:10);
+     const mA=Math.max(1,...planets().filter(p=>!p.deb).map(p=>Math.min(70,p.a*(1+p.e))));RM=Math.min((W-side)/2-18,((H-bot)/2-45)/TILT);MA=mA;S=RM/mA*zoom}
+    addEventListener('resize',resize);
+    const spLog=(x,y)=>{const r=Math.hypot(x,y);if(r<1e-9)return[cx,cy];let f;if(P>=1)f=r*S;else{const rmin=36*sunK()+16,rm=Math.max(rmin+30,RM*zoom);f=r<R0?rmin*r/R0:rmin+(rm-rmin)*Math.log(r/R0)/Math.log(Math.max(MA,R0*2)/R0)}return[cx+x/r*f,cy+y/r*f*TILT]};
+    const bp=b=>sp(b.x-sun.x,b.y-sun.y),svr=()=>Math.max(.6,Math.min(1.5,Math.sqrt(zoom)*(W<700?.8:1))),vr=()=>svr()*sz,sunK=()=>Math.min(Math.cbrt(sun.m),2.2)*svr()*.85,R0=.3;
+    const RIN=.05,UA=[[.05,0],[.387,.130],[.723,.243],[1,.351],[1.524,.470],[5.204,.686],[9.58,.789],[19.2,.892],[30.05,1]],UX=UA.map(a=>Math.log(a[0])),UY=UA.map(a=>a[1]);
+    const UM=(()=>{const n=UX.length,d=[],m=[];for(let i=0;i<n-1;i++)d.push((UY[i+1]-UY[i])/(UX[i+1]-UX[i]));m[0]=d[0];m[n-1]=d[n-2];for(let i=1;i<n-1;i++)m[i]=d[i-1]*d[i]<=0?0:2*d[i-1]*d[i]/(d[i-1]+d[i]);return m})();
+    function Ufun(r){const x=Math.log(Math.max(r,1e-9)),n=UX.length;if(x<=UX[0])return 0;if(x>=UX[n-1])return 1+UM[n-1]*(x-UX[n-1]);
+     let i=0;while(x>UX[i+1])i++;const h=UX[i+1]-UX[i],t=(x-UX[i])/h,t2=t*t,t3=t2*t;
+     return(2*t3-3*t2+1)*UY[i]+(t3-2*t2+t)*h*UM[i]+(-2*t3+3*t2)*UY[i+1]+(t3-t2)*h*UM[i+1]}
+    function fmap(r){const rmin=36*sunK()+16,rm=Math.max(rmin+30,RM*zoom);if(r<RIN)return rmin*r/RIN;if(P>.6)return rmin+(rm-rmin)*(Math.sqrt(r)-Math.sqrt(RIN))/(Math.sqrt(Math.max(MA,RIN*2))-Math.sqrt(RIN));return rmin+(rm-rmin)*Ufun(r)/Ufun(Math.max(MA,RIN*2))}
+    const sp=(x,y)=>{const r=Math.hypot(x,y);if(r<1e-9)return[cx,cy];const f=P>=1?r*S:fmap(r);return[cx+x/r*f,cy+y/r*f*TILT]};
+    function ppa(r){if(P>=1)return S;const a=Math.max(0,r-Math.max(5e-4,r*.01)),b=r+Math.max(5e-4,r*.01);return Math.max(1e-6,(fmap(b)-fmap(a))/(b-a))}
+    const stars=Array.from({length:160},()=>({x:Math.random(),y:Math.random(),s:Math.random()*1.8+.3,a:Math.random()*.8+.2,t:Math.random()*6}));
+    // ---- UI ----
+    const U=()=>sel.sun?1:EM;
+    function chips(){fillSel();const c=$('chips');c.innerHTML='';bodies.filter(b=>!b.deb||b===sel).forEach(b=>{const e=document.createElement('button');e.textContent=b.name;e.style.borderColor=b.color;if(b===sel)e.classList.add('on');e.onclick=()=>{sel=b;sync()};c.appendChild(e)})}
+    function sync(){if(!sel||!bodies.includes(sel))sel=sun;chips();if(!sel){sel=sun}document.querySelectorAll('.psp').forEach(e=>e.style.display=sel.sun?'none':'');
+     $('edt').textContent='Pengaturan: '+sel.name;$('ml').textContent=sel.sun?'Massa (M☉)':'Massa (⊕)';
+     const m=$('r_mass');m.min=sel.sun?-1.3:-3;m.max=sel.sun?1.7:5.5;m.value=Math.log10(sel.m/U());$('n_mass').value=+(sel.m/U()).toPrecision(4);
+     if(!sel.sun){$('f_name').value=sel.name;$('f_color').value=sel.color.length==7?sel.color:'#888888';$('r_a').value=$('n_a').value=+sel.a.toFixed(3);$('r_e').value=$('n_e').value=+sel.e.toFixed(3);$('r_r').value=$('n_r').value=+sel.r.toFixed(1)}
+     info();layout()}
+    function info(){rateTxt();if(!sel)return;let h;if(sel.sun)h=`Massa: <b>${(sel.m*1.989e30).toExponential(2)}</b> kg<br>= <b>${(sel.m/EM).toFixed(0)}</b> massa Bumi`;
+     else{const rx=sel.x-sun.x,ry=sel.y-sun.y,vx=sel.vx-sun.vx,vy=sel.vy-sun.vy,r=Math.hypot(rx,ry),v2=vx*vx+vy*vy,mu=G*(sun.m+sel.m),E=v2/2-mu/r,hh=rx*vy-ry*vx,e=Math.sqrt(Math.max(0,1+2*E*hh*hh/(mu*mu)));
+      h=`Jarak: <b>${r.toFixed(3)}</b> AU (${fnum(r*149.598)} juta km) · Kecepatan: <b>${(Math.sqrt(v2)*4.74).toFixed(1)}</b> km/s<br>Setara di simulasi: <b>${fm(Math.sqrt(v2)*4.74*spd*curSl*31557600)}</b> km/s (${(Math.sqrt(v2)*4.74*spd*curSl*31557600/299792).toFixed(0)}× kecepatan cahaya)<br>`+(E<0?`Sumbu a: <b>${(-mu/(2*E)).toFixed(3)}</b> AU · e: <b>${e.toFixed(3)}</b><br>Periode: <b>${(2*Math.PI*Math.sqrt(Math.pow(-mu/(2*E),3)/mu)).toFixed(2)}</b> tahun${spd*curSl>0?' (di simulasi: <b>'+((2*Math.PI*Math.sqrt(Math.pow(-mu/(2*E),3)/mu))/(spd*curSl)).toFixed(1)+'</b> detik)':''}`:`<b>Lintasan terbuka (lepas dari Matahari)</b><br>Kecepatan akhir di tak hingga: <b>${(Math.sqrt(2*E)*4.74).toFixed(1)}</b> km/s · jarak <b>${r.toFixed(1)}</b> AU. Hilang dari simulasi di 800 AU, sekitar <b>${fnum(escETA(r,rx*vx+ry*vy,E,mu,hh))}</b> tahun lagi${(rx*vx+ry*vy)<0?' (masih mendekat dulu, lalu menjauh)':''}.`)+`<br>Massa: <b>${(sel.m*1.989e30).toExponential(2)}</b> kg`}
+     if(!sel.sun&&impact&&impact.base.has(sel)){const b0=impact.base.get(sel),el=elems(sel);if(el.ok){let dw=(el.w-b0.w)*180/Math.PI;dw=((dw+540)%360)-180;const sg=(v,d)=>(v>=0?'+':'')+(Math.abs(v)<1e-3&&v!==0?v.toExponential(1):v.toFixed(d||4));
+      h+=`<br><span style="color:#fbbf24">Sejak ${impact.name} ${impact.act||'lenyap'} (${(tsim-impact.t).toFixed(1)} th): Δa <b>${sg(el.a-b0.a)}</b> AU · Δe <b>${sg(el.e-b0.e,5)}</b> · Δperihelion <b>${sg(dw,3)}</b>°</span>`}}
+     if(!sel.sun){const pr=[],rs=Math.hypot(sel.x-sun.x,sel.y-sun.y)||1e-9;bodies.forEach(q=>{if(q===sel||q.sun||q.deb)return;const d=Math.hypot(q.x-sel.x,q.y-sel.y)||1e-9;pr.push([q,(q.m/(d*d))/(sun.m/(rs*rs))])});pr.sort((x,y)=>y[1]-x[1]);
+      if(pr.length)h+=`<br>Tarikan planet lain pada ${sel.name} (dibanding tarikan Matahari): `+pr.slice(0,2).map(x=>`<b>${x[0].name}</b> ${(x[1]*100).toPrecision(2)}%`).join(', ')}
+     $('mcmp').innerHTML=massCmp(sel.m,!!sel.sun);
+     $('info').innerHTML=h}
+    function pair(k,fn){const s=$('r_'+k),m=$('n_'+k);const set=v=>{if(!sel||sel.sun||isNaN(v))return;fn(v);s.value=m.value=v;info();layout()};s.oninput=()=>set(+s.value);m.oninput=()=>set(+m.value)}
+    pair('a',v=>orbit(sel,v,sel.e,thNow(sel)));pair('e',v=>orbit(sel,sel.a,v,thNow(sel)));pair('r',v=>sel.r=v);
+    $('r_mass').oninput=e=>{if(massStart===null){massStart=sel.m;markMass(sel)}sel.m=Math.pow(10,+e.target.value)*U();$('n_mass').value=+(sel.m/U()).toPrecision(4);info()};
+    $('n_mass').oninput=e=>{const v=+e.target.value;if(v>0){if(massStart===null){massStart=sel.m;markMass(sel)}sel.m=v*U();$('r_mass').value=Math.log10(v);info()}};
+    $('f_name').oninput=e=>{sel.name=e.target.value;chips()};$('f_color').oninput=e=>sel.color=e.target.value;
+    $('del').onclick=()=>{if(sel.sun)return;noteVanish(sel);bodies=bodies.filter(b=>b!==sel);sel=sun;sync()};
+    $('add').onclick=()=>{cnt++;const ex=planets().filter(p=>!p.deb).map(p=>p.a),free=[2.6,3.6,.55,7.3,14.2,24.5,38,.28].find(a=>ex.every(b=>Math.max(a,b)/Math.min(a,b)>1.2))||Math.min(Math.max(1,...ex)*1.25,58),p={name:'Planet '+cnt,color:'#'+Math.floor(Math.random()*0x666666+0x999999).toString(16),r:6,m:EM,w:Math.random()*6.28};bodies.push(p);orbit(p,free,.05,Math.random()*6.28);setEl(p);sel=p;sync();if(paused)$('pause').click()};
+    $('jup').onclick=()=>{const j=bodies.find(b=>b.name==='Jupiter');if(j){markMass(j);const o=j.m;j.m*=50;j.r*=1.3;sel=j;sync();massNote(j,o)}};
+    $('r_mass').onchange=$('n_mass').onchange=()=>{if(massStart!==null){massNote(sel,massStart);massStart=null}};
+    $('m50').onclick=()=>{const b=sel;if(!b)return;markMass(b);const o=b.m;b.m=b.sun?b.m*2:b.m*50;if(!b.sun)b.r*=1.3;sync();massNote(b,o)};
+    $('m50d').onclick=()=>{const b=sel;if(!b)return;markMass(b);const o=b.m;b.m=b.sun?Math.max(b.m/2,.05):Math.max(b.m/50,1e-12);sync();massNote(b,o)};
+    $('sun2').onclick=()=>{markMass(sun);const o=sun.m;sun.m*=2;sel=sun;sync();massNote(sun,o)};
+    $('reset').onclick=()=>{init();zoom=1;$('toasts').innerHTML='';sync()};
+    $('pause').onclick=e=>{paused=!paused;e.target.textContent=paused?'▶ Lanjut':'⏸ Jeda';e.target.classList.toggle('on',paused)};
+    $('trails').onclick=e=>{trails=!trails;e.target.classList.toggle('on',trails)};$('ideal').onclick=e=>{ideal=!ideal;e.target.classList.toggle('on',ideal)};
+    $('names').onclick=e=>{names=!names;e.target.classList.toggle('on',names)};
+    const setSpd=m=>{spd=m/12;$('spdv').textContent=m>=12?(m/12).toFixed(m%12===0?0:1).replace('.',',')+' tahun/dtk':m+' bulan/dtk';rateTxt()};$('spd').oninput=e=>setSpd(+e.target.value);setSpd(1);
+    $('zin').onclick=()=>{zoom=Math.min(zoom*1.25,12);layout()};$('zout').onclick=()=>{zoom=Math.max(zoom/1.25,.2);layout()};
+    cv.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.2,Math.min(12,zoom*(e.deltaY<0?1.1:.9)));layout()},{passive:false});
+    $('tog').onclick=()=>{$('panel').classList.toggle('hide');layout()};
+    cv.addEventListener('pointerdown',e=>{if(cam>1.05)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=null,bd=1e9;
+     bodies.forEach(b=>{const[px,py]=b.sun?[cx,cy]:bp(b),d=Math.hypot(px-x,py-y),rr=b.sun?24*sunK():b.r*vr();if(d<rr+12&&d<bd){bd=d;best=b}});if(best){sel=best;sync()}});
+    // ---- gambar ----
+    function drawP(p){const[x,y]=bp(p),w=Math.max(0,Math.min(1,(cam-1)/3)),r0=p.r*vr()/Math.max(1,cam),r=r0*(1-w)+RC(p)*ppa(Math.hypot(p.x-sun.x,p.y-sun.y))*w;
+     ctx.beginPath();ctx.arc(x,y,r,0,6.283);ctx.fillStyle=p.color;ctx.fill();ctx.beginPath();ctx.arc(x-r*.25,y-r*.25,r*.85,0,6.283);ctx.fillStyle='rgba(255,255,255,.15)';ctx.fill();
+     if(p===sel){ctx.beginPath();ctx.arc(x,y,r+6,0,6.283);ctx.strokeStyle='#38bdf8';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([])}
+     if((names&&cam<1.3)||p===sel){ctx.fillStyle='#cbd5e1';ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillText(p.name,x,y+r+16)}}
+    function drawSun(){const k=sunK(),R=45*k,g=ctx.createRadialGradient(cx,cy,3,cx,cy,R);g.addColorStop(0,'#fff');g.addColorStop(.3,'#fde047');g.addColorStop(.7,'rgba(249,115,22,.5)');g.addColorStop(1,'rgba(249,115,22,0)');
+     ctx.beginPath();ctx.arc(cx,cy,R,0,6.283);ctx.fillStyle=g;ctx.fill();ctx.beginPath();ctx.arc(cx,cy,16*k,0,6.283);ctx.fillStyle='#fef08a';ctx.fill();
+     if(sel===sun){ctx.beginPath();ctx.arc(cx,cy,24*k+6,0,6.283);ctx.strokeStyle='#38bdf8';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([])}
+     if(names||sel===sun){ctx.fillStyle='#cbd5e1';ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillText('Matahari',cx,cy+24*k+16)}}
+    function frame0(now){const dt=Math.max(0,Math.min((now-last)/1000,.1));last=now;if(!isOrbitalVisible)return;ctx.clearRect(0,0,W,H);
+     let sl=1,ct=1,tx=cx,ty=cy;
+     if(cine){let dm=9,pa,pb;const nb=bodies.length;for(let i=1;i<nb;i++)for(let j=i+1;j<nb;j++){const a=bodies[i],b=bodies[j];if((a.deb&&b.deb)||a.im>tsim||b.im>tsim)continue;const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy);const Rs=RC(a)+RC(b),u=d/Rs;if(u<3&&u<dm&&(dx*(b.vx-a.vx)+dy*(b.vy-a.vy))/d<-.3){dm=u;pa=a;pb=b}}
+      if(pa){const mx=(pa.x+pb.x)/2-sun.x,my=(pa.y+pb.y)/2-sun.y,g=Math.max(0,Math.min(1,(3-dm)/2)),cg=Math.max(1,Math.min(60,16/(((RC(pa)+RC(pb))/2)*ppa(Math.hypot(mx,my)))));sl=Math.max(.04,1-.96*g*g);ct=1+(cg-1)*g;[tx,ty]=sp(mx,my)}
+      if(lastHit){const e=Math.max(0,(now-lastHit.t)/5000);if(e<1){sl=Math.min(sl,.35+.65*e*e);const c2=1+((lastHit.cam||4)-1)*(1-e);if(c2>ct){ct=c2;[tx,ty]=sp(lastHit.x,lastHit.y)}}}}
+     cam+=(ct-cam)*Math.min(1,dt*5);if(ct>1.01){if(cam<1.03){fpx=tx;fpy=ty}else{fpx+=(tx-fpx)*Math.min(1,dt*6);fpy+=(ty-fpy)*Math.min(1,dt*6)}}
+     curSl=sl;if(!paused){const yrs=spd*dt*sl,used=advance(yrs);fx.forEach(f=>{f.x+=(f.vx||0)*used;f.y+=(f.vy||0)*used});if(now-lastEl>250){lastEl=now;watchOrbits();planets().forEach(p=>{if(isFinite(p.x+p.y+p.vx+p.vy)&&!(p.im>tsim))setEl(p)})}}
+     stars.forEach(s=>{s.t+=dt;ctx.fillStyle=`rgba(255,255,255,${s.a*(.75+.25*Math.sin(s.t*1.5+s.x*10))})`;ctx.fillRect(s.x*W,s.y*H,s.s,s.s)});
+     ctx.save();if(cam>1.01){ctx.translate(fpx,fpy);ctx.scale(cam,cam);ctx.translate(-fpx,-fpy)}const ps=planets();
+     if(ideal)ps.filter(p=>p.e<1&&p.a>0).forEach(p=>{ctx.beginPath();for(let i=0;i<=120;i++){const th=i/120*6.283,r=p.a*(1-p.e*p.e)/(1+p.e*Math.cos(th)),[x,y]=sp(r*Math.cos(p.w+th),r*Math.sin(p.w+th));i?ctx.lineTo(x,y):ctx.moveTo(x,y)}
+      ctx.strokeStyle=p===sel?'rgba(56,189,248,.55)':'rgba(148,163,184,.22)';ctx.lineWidth=1;ctx.stroke()});
+     if(ideal&&impact&&sel&&impact.base.has(sel)){const o=impact.base.get(sel);ctx.save();ctx.setLineDash([5,5]);ctx.beginPath();for(let i=0;i<=120;i++){const th=i/120*6.283,r=o.a*(1-o.e*o.e)/(1+o.e*Math.cos(th)),[x,y]=sp(r*Math.cos(o.w+th),r*Math.sin(o.w+th));i?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.strokeStyle='rgba(251,191,36,.8)';ctx.lineWidth=1.3;ctx.stroke();ctx.restore()}
+     if(trails)ps.forEach(p=>{const t=p.trail,n=t.length;if(n<2)return;ctx.strokeStyle=p.color;ctx.lineWidth=2;for(let c=0;c<4;c++){const a=Math.floor(c*n/4),b=Math.min(n,Math.floor((c+1)*n/4)+1);ctx.beginPath();for(let i=a;i<b;i++){const[x,y]=sp(t[i][0],t[i][1]);i==a?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.globalAlpha=.15+c*.22;ctx.stroke()}ctx.globalAlpha=1});
+     ps.filter(p=>p.y<sun.y).forEach(drawP);drawSun();ps.filter(p=>p.y>=sun.y).forEach(drawP);
+     drawFx(now);ctx.restore();drawOff();$('tm').textContent='Waktu simulasi: '+tsim.toFixed(1)+' tahun'+(sl<.9?' · slow motion':'');
+     if(!paused&&Math.random()<.08)info()}
+    function frame(now){try{frame0(now)}catch(err){console.error(err);const d=Math.min(devicePixelRatio||1,2);ctx.setTransform(d,0,0,d,0,0);ctx.setLineDash([]);ctx.globalAlpha=1}requestAnimationFrame(frame)}
+    window.__orbitalSetActive = (active) => {
+      isOrbitalVisible = active;
+      if (active) {
+        last = performance.now();
+        resize();
+      }
+    };
+    if(innerWidth<=700)$('panel').classList.add('hide');
+    init();resize();sync();requestAnimationFrame(frame);
+  })();
+  </script>
+
+  <!-- ===================================================================== -->
+  <!-- SCRIPT 2: DINAMO SEPEDA & TURBIN ANGIN + PENGALIH TAB UTAMA           -->
+  <!-- ===================================================================== -->
+  <script>
+    // =========================================================================
+    // MANAJEMEN STATE GLOBAL, PAUSE/RESUME, ACCORDION & NAVIGASI TAB
+    // =========================================================================
+    let activeTab = 0;
+    let isSimulationPaused = false;
+
+    function toggleGlobalPause() {
+      isSimulationPaused = !isSimulationPaused;
+      const iconM = document.getElementById('pauseIconMobile');
+      const textM = document.getElementById('pauseTextMobile');
+      const iconD = document.getElementById('pauseIconDesktop');
+      const textD = document.getElementById('pauseTextDesktop');
+      const btnD = document.getElementById('globalPauseBtnDesktop');
+
+      if (isSimulationPaused) {
+        iconM.textContent = '▶';
+        textM.textContent = 'Lanjut';
+        iconD.textContent = '▶';
+        textD.textContent = 'Lanjutkan';
+        btnD.classList.add('border-amber-500/60', 'bg-amber-500/15', 'text-amber-200');
+      } else {
+        iconM.textContent = '⏸';
+        textM.textContent = 'Jeda';
+        iconD.textContent = '⏸';
+        textD.textContent = 'Jeda Simulasi';
+        btnD.classList.remove('border-amber-500/60', 'bg-amber-500/15', 'text-amber-200');
+      }
+    }
+
+    function toggleAccordion(bodyId, chevronId) {
+      const body = document.getElementById(bodyId);
+      const chevron = document.getElementById(chevronId);
+      const isHidden = body.classList.contains('hidden');
+      if (isHidden) {
+        body.classList.remove('hidden');
+        chevron.classList.add('rotate-180');
+      } else {
+        body.classList.add('hidden');
+        chevron.classList.remove('rotate-180');
+      }
+    }
+
+    function switchMainTab(tabNumber) {
+      activeTab = tabNumber;
+      const orbitalDiv = document.getElementById('sim-orbital');
+      const labMain = document.getElementById('sim-lab-fisika');
+      const tab1Section = document.getElementById('sim-tab-1');
+      const tab2Section = document.getElementById('sim-tab-2');
+      const btn0 = document.getElementById('btn-tab-0');
+      const btn1 = document.getElementById('btn-tab-1');
+      const btn2 = document.getElementById('btn-tab-2');
+      const pauseMobile = document.getElementById('globalPauseBtn');
+      const pauseDesktop = document.getElementById('globalPauseBtnDesktop');
+
+      [btn0, btn1, btn2].forEach((b, idx) => {
+        if (idx === tabNumber) {
+          b.className = b.className.replace('tab-inactive', 'tab-active');
+          b.setAttribute('aria-selected', 'true');
+        } else {
+          b.className = b.className.replace('tab-active', 'tab-inactive');
+          b.setAttribute('aria-selected', 'false');
+        }
+      });
+
+      if (tabNumber === 0) {
+        document.body.classList.remove('mode-lab');
+        document.body.classList.add('mode-orbital');
+        orbitalDiv.classList.remove('hidden');
+        labMain.classList.add('hidden');
+        pauseMobile.classList.add('hidden');
+        pauseMobile.classList.remove('inline-flex');
+        pauseDesktop.classList.add('hidden');
+        pauseDesktop.classList.remove('md:inline-flex');
+        if (window.__orbitalSetActive) window.__orbitalSetActive(true);
+      } else {
+        document.body.classList.remove('mode-orbital');
+        document.body.classList.add('mode-lab');
+        orbitalDiv.classList.add('hidden');
+        labMain.classList.remove('hidden');
+        pauseMobile.classList.remove('hidden');
+        pauseMobile.classList.add('inline-flex');
+        pauseDesktop.classList.remove('hidden');
+        pauseDesktop.classList.add('md:inline-flex');
+        if (window.__orbitalSetActive) window.__orbitalSetActive(false);
+
+        if (tabNumber === 1) {
+          tab1Section.classList.remove('hidden');
+          tab2Section.classList.add('hidden');
+        } else {
+          tab1Section.classList.add('hidden');
+          tab2Section.classList.remove('hidden');
+        }
+        resizeCanvases();
+      }
+    }
+
+    // =========================================================================
+    // SIMULASI 1: SISTEM PENERANGAN DINAMO SEPEDA
+    // =========================================================================
+    const bikeState = {
+      isAuto: true,
+      autoMechPower: 25.0,     // Watt (default 25 W)
+      currentMechPower: 25.0,  // Watt real-time
+      efficiency: 0.70,        // 70%
+      elecPower: 17.5,         // Watt
+      wheelAngle: 0,           // radian
+      dynamoAngle: 0,          // radian
+      wheelOmega: 6.5,         // rad/s
+      elapsedSeconds: 0,       // detik berjalan
+      totalEnergyJ: 0,         // Joule terkumpul
+      crankAngle: -0.4,        // radian posisi pegangan pedal
+      crankOmega: 0,           // kecepatan sudut pedal user (rad/s)
+      isDraggingCrank: false,
+      hasTouchedPedal: false,  // untuk menampilkan ghost guide animasi saat belum disentuh
+      lastPointerAngle: 0,
+      lastPointerTime: 0
+    };
+
+    function setBikeMode(autoMode) {
+      bikeState.isAuto = autoMode;
+      const segAuto = document.getElementById('segAutoBtn');
+      const segManual = document.getElementById('segManualBtn');
+      const autoPanel = document.getElementById('autoControlPanel');
+      const manualPanel = document.getElementById('manualCrankPanel');
+      const quickHint = document.getElementById('bike-quick-hint');
+
+      if (bikeState.isAuto) {
+        segAuto.className = 'py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30';
+        segManual.className = 'py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 text-slate-400 hover:text-slate-200 hover:bg-slate-900';
+        autoPanel.classList.remove('hidden');
+        manualPanel.classList.add('hidden');
+        quickHint.textContent = '💡 Mode Otomatis aktif: roda berputar stabil';
+      } else {
+        segManual.className = 'py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 bg-indigo-600 text-white shadow-lg shadow-indigo-600/30';
+        segAuto.className = 'py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 text-slate-400 hover:text-slate-200 hover:bg-slate-900';
+        autoPanel.classList.add('hidden');
+        manualPanel.classList.remove('hidden');
+        quickHint.textContent = '👆 Putar lingkaran pedal di bawah untuk menyalakan lampu!';
+        bikeState.crankOmega = 0;
+        drawPedalControl();
+      }
+    }
+
+    function updateBikeAutoPower(val) {
+      bikeState.autoMechPower = parseFloat(val);
+      document.getElementById('valBikePowerAuto').textContent = bikeState.autoMechPower.toFixed(0) + ' W';
+    }
+
+    function stepBikePower(delta) {
+      const slider = document.getElementById('sliderBikePower');
+      const nextVal = Math.min(60, Math.max(0, parseFloat(slider.value) + delta));
+      slider.value = nextVal;
+      updateBikeAutoPower(nextVal);
+    }
+
+    function updateBikeEff(val) {
+      bikeState.efficiency = parseFloat(val) / 100.0;
+      document.getElementById('valBikeEff').textContent = val + '%';
+    }
+
+    function stepBikeEff(delta) {
+      const slider = document.getElementById('sliderBikeEff');
+      const nextVal = Math.min(100, Math.max(10, parseFloat(slider.value) + delta));
+      slider.value = nextVal;
+      updateBikeEff(nextVal);
+    }
+
+    function resetBikeTimer() {
+      bikeState.elapsedSeconds = 0;
+      bikeState.totalEnergyJ = 0;
+      updateBikeMetricsUI();
+    }
+
+    function setBikeTargetTime() {
+      bikeState.elapsedSeconds = 240;
+      bikeState.totalEnergyJ = bikeState.elecPower * 240;
+      updateBikeMetricsUI();
+    }
+
+    // --- Interaksi Drag Lingkaran Pedal Manual ---
+    const pedalCanvas = document.getElementById('pedalCanvas');
+    const pedalCtx = pedalCanvas.getContext('2d');
+
+    function getPointerAngleFromCenter(clientX, clientY) {
+      const rect = pedalCanvas.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      return Math.atan2(clientY - cy, clientX - cx);
+    }
+
+    function handleCrankStart(clientX, clientY) {
+      if (bikeState.isAuto) return;
+      bikeState.isDraggingCrank = true;
+      bikeState.hasTouchedPedal = true;
+      bikeState.lastPointerAngle = getPointerAngleFromCenter(clientX, clientY);
+      bikeState.crankAngle = bikeState.lastPointerAngle;
+      bikeState.lastPointerTime = performance.now();
+    }
+
+    function handleCrankMove(clientX, clientY) {
+      if (!bikeState.isDraggingCrank || bikeState.isAuto) return;
+      const now = performance.now();
+      const dt = Math.max((now - bikeState.lastPointerTime) / 1000, 0.008);
+      const newAngle = getPointerAngleFromCenter(clientX, clientY);
+
+      let delta = newAngle - bikeState.lastPointerAngle;
+      while (delta > Math.PI) delta -= Math.PI * 2;
+      while (delta < -Math.PI) delta += Math.PI * 2;
+
+      bikeState.crankAngle = newAngle;
+      const instantOmega = Math.abs(delta) / dt;
+      bikeState.crankOmega = bikeState.crankOmega * 0.55 + Math.min(instantOmega, 18) * 0.45;
+
+      bikeState.lastPointerAngle = newAngle;
+      bikeState.lastPointerTime = now;
+    }
+
+    function handleCrankEnd() {
+      bikeState.isDraggingCrank = false;
+    }
+
+    pedalCanvas.addEventListener('mousedown', (e) => handleCrankStart(e.clientX, e.clientY));
+    window.addEventListener('mousemove', (e) => handleCrankMove(e.clientX, e.clientY));
+    window.addEventListener('mouseup', handleCrankEnd);
+
+    pedalCanvas.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        e.preventDefault();
+        handleCrankStart(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchmove', (e) => {
+      if (bikeState.isDraggingCrank && e.touches.length > 0) {
+        handleCrankMove(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', handleCrankEnd);
+
+    function drawPedalControl() {
+      const w = pedalCanvas.width;
+      const h = pedalCanvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const trackRadius = 76;
+
+      pedalCtx.clearRect(0, 0, w, h);
+
+      // Ring lintasan kayuhan
+      pedalCtx.beginPath();
+      pedalCtx.arc(cx, cy, trackRadius, 0, Math.PI * 2);
+      pedalCtx.strokeStyle = 'rgba(99, 102, 241, 0.28)';
+      pedalCtx.lineWidth = 16;
+      pedalCtx.stroke();
+
+      // Garis putus-putus panduan arah putar
+      pedalCtx.beginPath();
+      pedalCtx.arc(cx, cy, trackRadius, 0, Math.PI * 2);
+      pedalCtx.setLineDash([6, 6]);
+      pedalCtx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
+      pedalCtx.lineWidth = 1.5;
+      pedalCtx.stroke();
+      pedalCtx.setLineDash([]);
+
+      // Ghost Guide Panah Melingkar Animasi jika user belum menyentuh pedal
+      if (!bikeState.hasTouchedPedal && !bikeState.isAuto) {
+        const ghostPhase = (performance.now() * 0.0022) % (Math.PI * 2);
+        const arcStart = bikeState.crankAngle + 0.35;
+        const arcEnd = arcStart + 1.35;
+
+        pedalCtx.beginPath();
+        pedalCtx.arc(cx, cy, trackRadius + 16, arcStart, arcEnd);
+        pedalCtx.strokeStyle = `rgba(56, 189, 248, ${0.45 + 0.35 * Math.sin(ghostPhase * 2)})`;
+        pedalCtx.lineWidth = 2.5;
+        pedalCtx.stroke();
+
+        // Ujung panah ghost guide
+        const tipX = cx + Math.cos(arcEnd) * (trackRadius + 16);
+        const tipY = cy + Math.sin(arcEnd) * (trackRadius + 16);
+        pedalCtx.save();
+        pedalCtx.translate(tipX, tipY);
+        pedalCtx.rotate(arcEnd + Math.PI / 2);
+        pedalCtx.beginPath();
+        pedalCtx.moveTo(0, -5);
+        pedalCtx.lineTo(7, 3);
+        pedalCtx.lineTo(-4, 4);
+        pedalCtx.closePath();
+        pedalCtx.fillStyle = '#38bdf8';
+        pedalCtx.fill();
+        pedalCtx.restore();
+      }
+
+      // Lengan engkol (crank arm)
+      const px = cx + Math.cos(bikeState.crankAngle) * trackRadius;
+      const py = cy + Math.sin(bikeState.crankAngle) * trackRadius;
+
+      pedalCtx.beginPath();
+      pedalCtx.moveTo(cx, cy);
+      pedalCtx.lineTo(px, py);
+      pedalCtx.strokeStyle = '#64748b';
+      pedalCtx.lineWidth = 9;
+      pedalCtx.lineCap = 'round';
+      pedalCtx.stroke();
+
+      // Poros tengah
+      pedalCtx.beginPath();
+      pedalCtx.arc(cx, cy, 16, 0, Math.PI * 2);
+      pedalCtx.fillStyle = '#0f172a';
+      pedalCtx.fill();
+      pedalCtx.lineWidth = 3;
+      pedalCtx.strokeStyle = '#6366f1';
+      pedalCtx.stroke();
+
+      // Titik besar lingkaran as pedal (Handle)
+      const pulse = !bikeState.isDraggingCrank ? Math.sin(performance.now() * 0.006) * 3 : 0;
+      const glowRadius = (bikeState.isDraggingCrank ? 27 : 22) + pulse;
+      const grad = pedalCtx.createRadialGradient(px, py, 2, px, py, glowRadius);
+      grad.addColorStop(0, 'rgba(56, 189, 248, 0.85)');
+      grad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+      pedalCtx.beginPath();
+      pedalCtx.arc(px, py, glowRadius, 0, Math.PI * 2);
+      pedalCtx.fillStyle = grad;
+      pedalCtx.fill();
+
+      pedalCtx.beginPath();
+      pedalCtx.arc(px, py, 15, 0, Math.PI * 2);
+      pedalCtx.fillStyle = bikeState.isDraggingCrank ? '#38bdf8' : '#6366f1';
+      pedalCtx.fill();
+      pedalCtx.lineWidth = 3;
+      pedalCtx.strokeStyle = '#ffffff';
+      pedalCtx.stroke();
+
+      // Label tengah
+      pedalCtx.fillStyle = '#cbd5e1';
+      pedalCtx.font = '700 10px Inter, sans-serif';
+      pedalCtx.textAlign = 'center';
+      pedalCtx.fillText(bikeState.isDraggingCrank ? 'MENGAYUH...' : 'GESER PEDAL', cx, cy + 34);
+    }
+
+    // --- Canvas Visualisasi Sepeda & Dinamo ---
+    const bikeCanvas = document.getElementById('bikeCanvas');
+    const bikeCtx = bikeCanvas.getContext('2d');
+
+    function updateBikePhysics(dt) {
+      if (bikeState.isAuto) {
+        bikeState.currentMechPower = bikeState.autoMechPower;
+        bikeState.wheelOmega = (bikeState.currentMechPower / 25.0) * 6.5;
+        if (!isSimulationPaused) {
+          bikeState.crankAngle += bikeState.wheelOmega * 0.55 * dt;
+        }
+      } else {
+        if (!isSimulationPaused) {
+          if (!bikeState.isDraggingCrank) {
+            bikeState.crankOmega *= Math.pow(0.18, dt);
+            if (bikeState.crankOmega < 0.08) bikeState.crankOmega = 0;
+          } else {
+            bikeState.crankOmega *= Math.pow(0.45, dt);
+          }
+        }
+        bikeState.currentMechPower = Math.min(60, (bikeState.crankOmega / (Math.PI * 2)) * 25.0);
+        bikeState.wheelOmega = bikeState.crankOmega * 1.15;
+        drawPedalControl();
+      }
+
+      bikeState.elecPower = bikeState.efficiency * bikeState.currentMechPower;
+
+      if (!isSimulationPaused) {
+        if (bikeState.currentMechPower > 0.05) {
+          bikeState.elapsedSeconds += dt;
+          bikeState.totalEnergyJ += bikeState.elecPower * dt;
+        }
+        bikeState.wheelAngle += bikeState.wheelOmega * dt;
+        bikeState.dynamoAngle -= bikeState.wheelOmega * 6.0 * dt;
+      }
+
+      updateBikeMetricsUI();
+    }
+
+    function updateBikeMetricsUI() {
+      const pMech = bikeState.currentMechPower;
+      const pElec = bikeState.elecPower;
+      const effPct = Math.round(bikeState.efficiency * 100);
+      const lossW = Math.max(0, pMech - pElec);
+
+      // Update Alur Energi Step-by-Step
+      document.getElementById('flowBikeStep1').textContent = pMech.toFixed(1) + ' W';
+      document.getElementById('flowBikeStep2').textContent = effPct + '%';
+      document.getElementById('flowBikeLossSmall').textContent = `Rugi panas: ${lossW.toFixed(1)} W`;
+      document.getElementById('flowBikeStep3').textContent = pElec.toFixed(1) + ' W';
+
+      // Update Bar Meter & Feedback pada Mode Manual
+      if (!bikeState.isAuto) {
+        const barPct = Math.min(100, (pMech / 50) * 100);
+        document.getElementById('manualPowerBar').style.width = barPct + '%';
+        const fb = document.getElementById('manualSpeedFeedback');
+        if (pMech < 0.3) {
+          fb.textContent = 'Diam (0.0 W)';
+          fb.className = 'font-semibold text-slate-400';
+        } else if (pMech < 14) {
+          fb.textContent = `Pelan (${pMech.toFixed(1)} W • Lampu Redup)`;
+          fb.className = 'font-semibold text-sky-300';
+        } else if (pMech < 32) {
+          fb.textContent = `Sedang (${pMech.toFixed(1)} W • Terang Optimal)`;
+          fb.className = 'font-semibold text-amber-300';
+        } else {
+          fb.textContent = `Cepat! (${pMech.toFixed(1)} W • Sangat Terang)`;
+          fb.className = 'font-semibold text-yellow-200';
+        }
+      }
+
+      // Energi akumulatif & proyeksi 4 menit
+      document.getElementById('metricBikeEnergyJ').textContent = Math.round(bikeState.totalEnergyJ).toLocaleString('id-ID') + ' J';
+      const wh = bikeState.totalEnergyJ / 3600;
+      document.getElementById('metricBikeEnergyWh').textContent = `(${wh.toFixed(3)} Wh)`;
+
+      const projJ = pElec * 240;
+      const projWh = projJ / 3600;
+      document.getElementById('metricBikeProjectedJ').textContent = Math.round(projJ).toLocaleString('id-ID') + ' J';
+      document.getElementById('metricBikeProjectedWh').textContent = projWh.toFixed(2) + ' Wh';
+
+      // Update Accordion Rumus Live
+      document.getElementById('mathBikeP').textContent = `= ${bikeState.efficiency.toFixed(2)} × ${pMech.toFixed(2)} W = ${pElec.toFixed(2)} Watt`;
+      document.getElementById('mathBikeE').textContent = `= ${pElec.toFixed(2)} W × 240 s = ${Math.round(projJ).toLocaleString('id-ID')} Joule (${projWh.toFixed(2)} Wh)`;
+      document.getElementById('mathBikeCurT').textContent = `t = ${bikeState.elapsedSeconds.toFixed(1)} s`;
+      document.getElementById('mathBikeCurE').textContent = `= ${pElec.toFixed(2)} W × ${bikeState.elapsedSeconds.toFixed(1)} s = ${Math.round(bikeState.totalEnergyJ).toLocaleString('id-ID')} Joule`;
+
+      // Timer & Progress bar
+      const totalSec = Math.floor(bikeState.elapsedSeconds);
+      const mins = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const secs = String(totalSec % 60).padStart(2, '0');
+      document.getElementById('bikeTimerDisplay').textContent = `${mins}:${secs}`;
+      document.getElementById('bikeSecondsDisplay').textContent = `Waktu berjalan: ${bikeState.elapsedSeconds.toFixed(1)} detik`;
+
+      const pct = Math.min(100, (bikeState.elapsedSeconds / 240) * 100);
+      document.getElementById('bikeTimeProgress').style.width = pct + '%';
+
+      const targetStatus = document.getElementById('bikeTargetStatus');
+      if (bikeState.elapsedSeconds >= 240) {
+        targetStatus.textContent = '✓ Target 4 menit (240 dtk) tercapai!';
+        targetStatus.className = 'text-emerald-400 font-semibold';
+      } else {
+        targetStatus.textContent = 'Target soal: 4 menit (240 detik)';
+        targetStatus.className = 'text-slate-400';
+      }
+
+      // RPM & Status Lampu Ramah Pengguna
+      const rpm = Math.round((bikeState.wheelOmega * 60) / (Math.PI * 2));
+      document.getElementById('rpm-badge').textContent = `${rpm} RPM`;
+
+      const pill = document.getElementById('lamp-status-pill');
+      const dot = document.getElementById('lamp-status-dot');
+      const statusText = document.getElementById('lamp-status-text');
+
+      if (pElec < 0.3) {
+        pill.className = 'inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/90 border border-slate-700';
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500';
+        statusText.className = 'text-xs font-semibold text-slate-400';
+        statusText.textContent = 'Lampu Mati (0.0 W)';
+      } else if (pElec < 10) {
+        pill.className = 'inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25';
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-500/80';
+        statusText.className = 'text-xs font-semibold text-amber-300/85';
+        statusText.textContent = `Redup (${pElec.toFixed(1)} W)`;
+      } else if (pElec < 25) {
+        pill.className = 'inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40';
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
+        statusText.className = 'text-xs font-semibold text-amber-300';
+        statusText.textContent = `Terang Optimal (${pElec.toFixed(1)} W)`;
+      } else {
+        pill.className = 'inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/25 border border-yellow-300/50';
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-yellow-300 animate-ping';
+        statusText.className = 'text-xs font-semibold text-yellow-200';
+        statusText.textContent = `Sangat Terang (${pElec.toFixed(1)} W)`;
+      }
+    }
+
+    function renderBikeScene() {
+      const w = bikeCanvas.width;
+      const h = bikeCanvas.height;
+      bikeCtx.clearRect(0, 0, w, h);
+
+      const scale = Math.min(w / 720, h / 420);
+      const groundY = h * 0.84;
+
+      // 1. Latar Langit Malam & Bintang Halus
+      bikeCtx.fillStyle = 'rgba(226, 232, 240, 0.25)';
+      const stars = [[0.12, 0.14], [0.28, 0.09], [0.55, 0.12], [0.76, 0.16], [0.91, 0.10], [0.68, 0.24]];
+      for (const [sx, sy] of stars) {
+        bikeCtx.beginPath();
+        bikeCtx.arc(w * sx, h * sy, 1.4 * scale, 0, Math.PI * 2);
+        bikeCtx.fill();
+      }
+
+      // 2. Aspal Jalan Malam
+      bikeCtx.fillStyle = '#090e1f';
+      bikeCtx.fillRect(0, groundY, w, h - groundY);
+
+      bikeCtx.beginPath();
+      bikeCtx.moveTo(0, groundY);
+      bikeCtx.lineTo(w, groundY);
+      bikeCtx.strokeStyle = 'rgba(99, 102, 241, 0.35)';
+      bikeCtx.lineWidth = 2;
+      bikeCtx.stroke();
+
+      const roadOffset = (bikeState.wheelAngle * 85) % 80;
+      bikeCtx.strokeStyle = 'rgba(148, 163, 184, 0.22)';
+      bikeCtx.lineWidth = 3;
+      for (let x = -roadOffset; x < w; x += 80) {
+        bikeCtx.beginPath();
+        bikeCtx.moveTo(x, groundY + 18);
+        bikeCtx.lineTo(x + 36, groundY + 18);
+        bikeCtx.stroke();
+      }
+
+      const wheelRadius = 112 * scale;
+      const wheelCx = w * 0.35;
+      const wheelCy = groundY - wheelRadius - 4;
+
+      // 3. Efek Cahaya Lampu Sepeda & Pantulan di Aspal Jalan Malam
+      const lampX = wheelCx + 92 * scale;
+      const lampY = wheelCy - 128 * scale;
+      const flicker = (bikeState.elecPower > 0.3 && bikeState.elecPower < 5)
+        ? 0.88 + 0.12 * Math.sin(performance.now() * 0.03)
+        : 1.0;
+      const brightness = Math.min(1, Math.pow(bikeState.elecPower / 30.0, 0.8)) * flicker;
+
+      if (brightness > 0.01) {
+        const beamLength = (250 + brightness * 310) * scale;
+        const beamSpread = (85 + brightness * 105) * scale;
+
+        const beamGrad = bikeCtx.createLinearGradient(lampX, lampY, lampX + beamLength, groundY);
+        beamGrad.addColorStop(0, `rgba(254, 240, 138, ${0.64 * brightness})`);
+        beamGrad.addColorStop(0.45, `rgba(250, 204, 21, ${0.26 * brightness})`);
+        beamGrad.addColorStop(1, 'rgba(250, 204, 21, 0)');
+
+        bikeCtx.beginPath();
+        bikeCtx.moveTo(lampX + 10 * scale, lampY - 8 * scale);
+        bikeCtx.lineTo(lampX + beamLength, lampY - beamSpread * 0.35);
+        bikeCtx.lineTo(lampX + beamLength, groundY + 6 * scale);
+        bikeCtx.lineTo(lampX + 10 * scale, lampY + 8 * scale);
+        bikeCtx.closePath();
+        bikeCtx.fillStyle = beamGrad;
+        bikeCtx.fill();
+
+        const roadPoolX = lampX + beamLength * 0.65;
+        const roadPoolGrad = bikeCtx.createRadialGradient(roadPoolX, groundY + 4 * scale, 4, roadPoolX, groundY + 4 * scale, 110 * scale);
+        roadPoolGrad.addColorStop(0, `rgba(254, 240, 138, ${0.38 * brightness})`);
+        roadPoolGrad.addColorStop(1, 'rgba(254, 240, 138, 0)');
+        bikeCtx.fillStyle = roadPoolGrad;
+        bikeCtx.beginPath();
+        bikeCtx.ellipse(roadPoolX, groundY + 4 * scale, 110 * scale, 14 * scale, 0, 0, Math.PI * 2);
+        bikeCtx.fill();
+
+        const haloRadius = (40 + brightness * 58) * scale;
+        const haloGrad = bikeCtx.createRadialGradient(lampX + 8 * scale, lampY, 2, lampX + 8 * scale, lampY, haloRadius);
+        haloGrad.addColorStop(0, `rgba(254, 249, 195, ${0.95 * brightness})`);
+        haloGrad.addColorStop(0.4, `rgba(250, 204, 21, ${0.48 * brightness})`);
+        haloGrad.addColorStop(1, 'rgba(250, 204, 21, 0)');
+        bikeCtx.beginPath();
+        bikeCtx.arc(lampX + 8 * scale, lampY, haloRadius, 0, Math.PI * 2);
+        bikeCtx.fillStyle = haloGrad;
+        bikeCtx.fill();
+      }
+
+      // 4. Roda Sepeda
+      bikeCtx.save();
+      bikeCtx.translate(wheelCx, wheelCy);
+
+      bikeCtx.beginPath();
+      bikeCtx.arc(0, 0, wheelRadius, 0, Math.PI * 2);
+      bikeCtx.strokeStyle = '#1e293b';
+      bikeCtx.lineWidth = 16 * scale;
+      bikeCtx.stroke();
+
+      bikeCtx.beginPath();
+      bikeCtx.arc(0, 0, wheelRadius - 5 * scale, 0, Math.PI * 2);
+      bikeCtx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+      bikeCtx.lineWidth = 1.5 * scale;
+      bikeCtx.stroke();
+
+      const rimRadius = wheelRadius - 11 * scale;
+      bikeCtx.beginPath();
+      bikeCtx.arc(0, 0, rimRadius, 0, Math.PI * 2);
+      bikeCtx.strokeStyle = '#94a3b8';
+      bikeCtx.lineWidth = 4 * scale;
+      bikeCtx.stroke();
+
+      bikeCtx.rotate(bikeState.wheelAngle);
+      const spokeCount = 16;
+      for (let i = 0; i < spokeCount; i++) {
+        const ang = (i * Math.PI * 2) / spokeCount;
+        bikeCtx.beginPath();
+        bikeCtx.moveTo(Math.cos(ang) * 14 * scale, Math.sin(ang) * 14 * scale);
+        bikeCtx.lineTo(Math.cos(ang) * rimRadius, Math.sin(ang) * rimRadius);
+        bikeCtx.strokeStyle = 'rgba(203, 213, 225, 0.45)';
+        bikeCtx.lineWidth = 1.6 * scale;
+        bikeCtx.stroke();
+      }
+
+      bikeCtx.beginPath();
+      bikeCtx.arc(rimRadius - 4 * scale, 0, 4.5 * scale, 0, Math.PI * 2);
+      bikeCtx.fillStyle = '#38bdf8';
+      bikeCtx.fill();
+
+      bikeCtx.beginPath();
+      bikeCtx.arc(0, 0, 15 * scale, 0, Math.PI * 2);
+      bikeCtx.fillStyle = '#334155';
+      bikeCtx.fill();
+      bikeCtx.lineWidth = 2.5 * scale;
+      bikeCtx.strokeStyle = '#6366f1';
+      bikeCtx.stroke();
+
+      bikeCtx.restore();
+
+      // 5. Rangka & Garpu Depan Sepeda
+      const crownX = wheelCx + 36 * scale;
+      const crownY = wheelCy - 122 * scale;
+      const headTopX = wheelCx + 52 * scale;
+      const headTopY = wheelCy - 175 * scale;
+
+      bikeCtx.beginPath();
+      bikeCtx.moveTo(headTopX - 6 * scale, headTopY + 18 * scale);
+      bikeCtx.lineTo(wheelCx - 175 * scale, wheelCy - 95 * scale);
+      bikeCtx.moveTo(crownX + 4 * scale, crownY - 12 * scale);
+      bikeCtx.lineTo(wheelCx - 150 * scale, wheelCy - 20 * scale);
+      bikeCtx.strokeStyle = '#3b4d71';
+      bikeCtx.lineWidth = 9 * scale;
+      bikeCtx.lineCap = 'round';
+      bikeCtx.stroke();
+
+      bikeCtx.beginPath();
+      bikeCtx.moveTo(wheelCx, wheelCy);
+      bikeCtx.lineTo(crownX, crownY);
+      bikeCtx.lineTo(headTopX, headTopY);
+      bikeCtx.strokeStyle = '#4f679a';
+      bikeCtx.lineWidth = 9 * scale;
+      bikeCtx.lineCap = 'round';
+      bikeCtx.stroke();
+
+      bikeCtx.beginPath();
+      bikeCtx.moveTo(headTopX, headTopY);
+      bikeCtx.lineTo(headTopX - 18 * scale, headTopY - 22 * scale);
+      bikeCtx.lineTo(headTopX - 38 * scale, headTopY - 20 * scale);
+      bikeCtx.strokeStyle = '#cbd5e1';
+      bikeCtx.lineWidth = 6 * scale;
+      bikeCtx.stroke();
+
+      // 6. Dinamo Botol pada Dinding Ban
+      const dynAngleOnWheel = -0.58;
+      const dynContactX = wheelCx + Math.cos(dynAngleOnWheel) * (wheelRadius + 2 * scale);
+      const dynContactY = wheelCy + Math.sin(dynAngleOnWheel) * (wheelRadius + 2 * scale);
+
+      bikeCtx.save();
+      bikeCtx.translate(dynContactX, dynContactY);
+      bikeCtx.rotate(dynAngleOnWheel + Math.PI / 2);
+
+      bikeCtx.fillStyle = '#94a3b8';
+      bikeCtx.fillRect(-7 * scale, -14 * scale, 14 * scale, 12 * scale);
+
+      const rollerStripe = ((bikeState.dynamoAngle % (Math.PI * 2)) / (Math.PI * 2)) * 12 * scale;
+      bikeCtx.fillStyle = '#1e293b';
+      bikeCtx.fillRect(-7 * scale + rollerStripe, -14 * scale, 3 * scale, 12 * scale);
+
+      bikeCtx.fillStyle = '#1e293b';
+      bikeCtx.strokeStyle = '#38bdf8';
+      bikeCtx.lineWidth = 2 * scale;
+      bikeCtx.beginPath();
+      bikeCtx.roundRect(-13 * scale, -44 * scale, 26 * scale, 30 * scale, 5 * scale);
+      bikeCtx.fill();
+      bikeCtx.stroke();
+
+      bikeCtx.fillStyle = brightness > 0.05 ? '#f59e0b' : '#78350f';
+      bikeCtx.fillRect(-8 * scale, -36 * scale, 16 * scale, 14 * scale);
+      bikeCtx.restore();
+
+      // 7. Kabel & Aliran Elektron
+      const wireStartX = dynContactX + 18 * scale;
+      const wireStartY = dynContactY - 26 * scale;
+
+      bikeCtx.beginPath();
+      bikeCtx.moveTo(wireStartX, wireStartY);
+      bikeCtx.bezierCurveTo(
+        wireStartX + 22 * scale, wireStartY - 10 * scale,
+        lampX - 24 * scale, lampY + 12 * scale,
+        lampX - 10 * scale, lampY
+      );
+      bikeCtx.strokeStyle = '#ef4444';
+      bikeCtx.lineWidth = 2.8 * scale;
+      bikeCtx.stroke();
+
+      if (bikeState.elecPower > 0.2) {
+        const flowPhase = (performance.now() * 0.004 * (0.5 + brightness * 2)) % 1;
+        for (let t = flowPhase; t <= 1; t += 0.25) {
+          const invT = 1 - t;
+          const p0x = wireStartX, p0y = wireStartY;
+          const p1x = wireStartX + 22 * scale, p1y = wireStartY - 10 * scale;
+          const p2x = lampX - 24 * scale, p2y = lampY + 12 * scale;
+          const p3x = lampX - 10 * scale, p3y = lampY;
+
+          const bx = invT*invT*invT*p0x + 3*invT*invT*t*p1x + 3*invT*t*t*p2x + t*t*t*p3x;
+          const by = invT*invT*invT*p0y + 3*invT*invT*t*p1y + 3*invT*t*t*p2y + t*t*t*p3y;
+
+          bikeCtx.beginPath();
+          bikeCtx.arc(bx, by, 3 * scale, 0, Math.PI * 2);
+          bikeCtx.fillStyle = '#fde047';
+          bikeCtx.fill();
+        }
+      }
+
+      // 8. Rumah Lampu Sepeda
+      bikeCtx.beginPath();
+      bikeCtx.moveTo(crownX + 4 * scale, crownY - 8 * scale);
+      bikeCtx.lineTo(lampX - 12 * scale, lampY);
+      bikeCtx.strokeStyle = '#94a3b8';
+      bikeCtx.lineWidth = 4 * scale;
+      bikeCtx.stroke();
+
+      bikeCtx.beginPath();
+      bikeCtx.arc(lampX, lampY, 15 * scale, Math.PI * 0.5, Math.PI * 1.5);
+      bikeCtx.fillStyle = '#334155';
+      bikeCtx.fill();
+      bikeCtx.strokeStyle = '#cbd5e1';
+      bikeCtx.lineWidth = 2 * scale;
+      bikeCtx.stroke();
+
+      bikeCtx.beginPath();
+      bikeCtx.ellipse(lampX + 2 * scale, lampY, 6 * scale, 14 * scale, 0, 0, Math.PI * 2);
+      if (brightness > 0.01) {
+        const r = 254;
+        const g = Math.round(215 + 40 * brightness);
+        const b = Math.round(80 + 160 * brightness);
+        bikeCtx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+      } else {
+        bikeCtx.fillStyle = '#475569';
+      }
+      bikeCtx.fill();
+
+      // Label Anotasi Visual
+      bikeCtx.fillStyle = 'rgba(226, 232, 240, 0.9)';
+      bikeCtx.font = `600 ${Math.max(10, Math.round(11 * scale))}px Inter, sans-serif`;
+      bikeCtx.textAlign = 'left';
+      bikeCtx.fillText(`Dinamo (${Math.round(bikeState.efficiency * 100)}%)`, dynContactX + 24 * scale, dynContactY - 38 * scale);
+      bikeCtx.fillText(`Lampu (${bikeState.elecPower.toFixed(1)} W)`, lampX - 15 * scale, lampY - 24 * scale);
+    }
+
+
+    // =========================================================================
+    // SIMULASI 2: TURBIN ANGIN SKALA KECIL PESISIR
+    // =========================================================================
+    const windState = {
+      area: 12.0,          // m^2 (default 12)
+      speed: 8.0,          // m/s (default 8)
+      rho: 1.2,            // kg/m^3 (konstanta soal)
+      cp: 0.30,            // koefisien daya turbin (konstanta soal)
+      genEff: 0.85,        // 85% (default)
+      rotorAngle: 0,       // radian
+      particles: []
+    };
+
+    const windCanvas = document.getElementById('windCanvas');
+    const windCtx = windCanvas.getContext('2d');
+
+    function initWindParticles() {
+      windState.particles = [];
+      for (let i = 0; i < 42; i++) {
+        windState.particles.push({
+          x: Math.random() * 900,
+          y: 30 + Math.random() * 290,
+          len: 35 + Math.random() * 65,
+          speedFactor: 0.8 + Math.random() * 0.45,
+          alpha: 0.15 + Math.random() * 0.35
+        });
+      }
+    }
+
+    function stepWindParam(sliderId, delta) {
+      const slider = document.getElementById(sliderId);
+      const min = parseFloat(slider.min);
+      const max = parseFloat(slider.max);
+      const nextVal = Math.min(max, Math.max(min, parseFloat(slider.value) + delta));
+      slider.value = nextVal;
+      updateWindParams();
+    }
+
+    function updateWindParams() {
+      windState.area = parseFloat(document.getElementById('sliderWindArea').value);
+      windState.speed = parseFloat(document.getElementById('sliderWindSpeed').value);
+      windState.genEff = parseFloat(document.getElementById('sliderWindEff').value) / 100.0;
+
+      document.getElementById('valWindArea').textContent = windState.area.toFixed(1) + ' m²';
+      document.getElementById('valWindSpeed').textContent = windState.speed.toFixed(1) + ' m/s';
+      document.getElementById('valWindEff').textContent = Math.round(windState.genEff * 100) + '%';
+
+      calculateAndDisplayWindMetrics();
+    }
+
+    function calculateAndDisplayWindMetrics() {
+      const A = windState.area;
+      const v = windState.speed;
+      const rho = windState.rho;
+      const cp = windState.cp;
+      const eta = windState.genEff;
+
+      const pWind = 0.5 * rho * A * Math.pow(v, 3);
+      const pTurbine = cp * pWind;
+      const pElectric = eta * pWind * cp;
+
+      const fmt = (num) => num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const fmt1 = (num) => num.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+      // Update Diagram Alur Energi 3 Tahap
+      document.getElementById('flowWindPower').textContent = `${fmt1(pWind)} W`;
+      document.getElementById('flowTurbinePower').textContent = `${fmt1(pTurbine)} W`;
+      document.getElementById('flowElectricPower').textContent = `${fmt1(pElectric)} W`;
+      document.getElementById('flowGenEffText').textContent = `Efisiensi gen: ${Math.round(eta * 100)}%`;
+
+      // Update Ilustrasi Dampak Nyata Ramah Awam
+      const ledCount = Math.floor(pElectric / 10);
+      const impactEl = document.getElementById('windRealWorldImpact');
+      if (pElectric < 10) {
+        impactEl.innerHTML = 'Daya listrik belum cukup untuk menyalakan lampu rumah 10 W.';
+      } else {
+        impactEl.innerHTML = `Setara menyalakan <strong>~${ledCount.toLocaleString('id-ID')} lampu LED rumah (10 W)</strong> sekaligus!`;
+      }
+      document.getElementById('windKwBadge').textContent = `${(pElectric / 1000).toFixed(2)} kW`;
+
+      // Update Accordion Rincian Perhitungan
+      document.getElementById('calcWindStep1').textContent = `= 0.5 × ${rho} × ${A.toFixed(1)} × (${v.toFixed(1)})³`;
+      document.getElementById('calcWindRes1').textContent = `= ${fmt(pWind)} Watt (${(pWind / 1000).toFixed(2)} kW)`;
+
+      document.getElementById('calcWindStep2').textContent = `= ${cp.toFixed(2)} × ${fmt(pWind)} W`;
+      document.getElementById('calcWindRes2').textContent = `= ${fmt(pTurbine)} Watt (${(pTurbine / 1000).toFixed(2)} kW)`;
+
+      document.getElementById('calcWindStep3').textContent = `= ${eta.toFixed(2)} × ${fmt(pTurbine)} W`;
+      document.getElementById('calcWindRes3').textContent = `= ${fmt(pElectric)} Watt (${(pElectric / 1000).toFixed(2)} kW)`;
+
+      // Status Angin di Atas Canvas
+      const dot = document.getElementById('wind-status-dot');
+      const statusText = document.getElementById('wind-status-text');
+      if (v === 0) {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500';
+        statusText.className = 'text-xs font-semibold text-slate-400';
+        statusText.textContent = 'Angin Tenang (0.0 m/s) • Turbin Diam';
+      } else if (v < 6) {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-teal-400';
+        statusText.className = 'text-xs font-semibold text-teal-300';
+        statusText.textContent = `Angin Sepoi Pesisir (${v.toFixed(1)} m/s)`;
+      } else if (v <= 13) {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-sky-400 animate-pulse';
+        statusText.className = 'text-xs font-semibold text-sky-300';
+        statusText.textContent = `Angin Pesisir Optimal (${v.toFixed(1)} m/s)`;
+      } else {
+        dot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping';
+        statusText.className = 'text-xs font-semibold text-amber-300';
+        statusText.textContent = `Angin Kencang (${v.toFixed(1)} m/s) • Daya Tinggi`;
+      }
+
+      return pElectric;
+    }
+
+    function updateWindPhysics(dt) {
+      if (isSimulationPaused) return;
+      const angularVel = windState.speed * 0.44;
+      windState.rotorAngle += angularVel * dt;
+
+      const w = windCanvas.width || 800;
+      const h = windCanvas.height || 400;
+      for (const p of windState.particles) {
+        if (windState.speed > 0) {
+          p.x += (windState.speed * 34 * p.speedFactor) * dt;
+          if (p.x > w + 60) {
+            p.x = -p.len - Math.random() * 40;
+            p.y = 25 + Math.random() * (h * 0.72);
+          }
+        }
+      }
+    }
+
+    function renderWindScene() {
+      const w = windCanvas.width;
+      const h = windCanvas.height;
+      windCtx.clearRect(0, 0, w, h);
+
+      const scale = Math.min(w / 720, h / 420);
+      const seaY = h * 0.76;
+
+      // 1. Langit Malam Pesisir & Bintang Halus
+      const skyGrad = windCtx.createLinearGradient(0, 0, 0, seaY);
+      skyGrad.addColorStop(0, '#060a18');
+      skyGrad.addColorStop(0.65, '#0f1b3d');
+      skyGrad.addColorStop(1, '#172a56');
+      windCtx.fillStyle = skyGrad;
+      windCtx.fillRect(0, 0, w, seaY);
+
+      windCtx.beginPath();
+      windCtx.arc(w * 0.82, h * 0.18, 18 * scale, 0, Math.PI * 2);
+      windCtx.fillStyle = 'rgba(224, 242, 254, 0.14)';
+      windCtx.fill();
+
+      // 2. Partikel Aliran Angin
+      if (windState.speed > 0.1) {
+        const speedNorm = Math.min(1, windState.speed / 20);
+        for (const p of windState.particles) {
+          const streakLen = p.len * (0.5 + speedNorm * 1.1);
+          const grad = windCtx.createLinearGradient(p.x, p.y, p.x + streakLen, p.y);
+          grad.addColorStop(0, 'rgba(56, 189, 248, 0)');
+          grad.addColorStop(0.5, `rgba(125, 211, 252, ${p.alpha * (0.35 + speedNorm * 0.65)})`);
+          grad.addColorStop(1, 'rgba(224, 242, 254, 0)');
+
+          windCtx.beginPath();
+          windCtx.moveTo(p.x, p.y);
+          windCtx.lineTo(p.x + streakLen, p.y);
+          windCtx.strokeStyle = grad;
+          windCtx.lineWidth = (1.2 + speedNorm * 1.4) * scale;
+          windCtx.stroke();
+        }
+      }
+
+      // 3. Laut Pesisir & Ombak Halus
+      const seaGrad = windCtx.createLinearGradient(0, seaY, 0, h);
+      seaGrad.addColorStop(0, '#0c2344');
+      seaGrad.addColorStop(1, '#061124');
+      windCtx.fillStyle = seaGrad;
+      windCtx.fillRect(0, seaY, w, h - seaY);
+
+      const waveShift = (performance.now() * 0.03 * (0.3 + windState.speed * 0.1)) % 60;
+      windCtx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
+      windCtx.lineWidth = 1.5;
+      for (let row = 0; row < 3; row++) {
+        const wy = seaY + (14 + row * 22) * scale;
+        windCtx.beginPath();
+        for (let wx = -60 + waveShift; wx < w + 60; wx += 60) {
+          windCtx.moveTo(wx, wy);
+          windCtx.quadraticCurveTo(wx + 15, wy - 3, wx + 30, wy);
+        }
+        windCtx.stroke();
+      }
+
+      // 4. Daratan Dermaga / Tanjung Pesisir Tempat Turbin & Pos Listrik Berdiri
+      windCtx.beginPath();
+      windCtx.moveTo(w * 0.25, h);
+      windCtx.lineTo(w * 0.32, seaY + 6 * scale);
+      windCtx.lineTo(w * 0.78, seaY + 6 * scale);
+      windCtx.lineTo(w * 0.85, h);
+      windCtx.closePath();
+      windCtx.fillStyle = '#091122';
+      windCtx.fill();
+      windCtx.strokeStyle = 'rgba(99, 102, 241, 0.25)';
+      windCtx.lineWidth = 1.5;
+      windCtx.stroke();
+
+      // 5. Pos Gardu / Rumah Pesisir yang Mendapat Suplai Listrik dari Turbin
+      const pElec = 0.5 * windState.rho * windState.area * Math.pow(windState.speed, 3) * windState.cp * windState.genEff;
+      const houseX = w * 0.65;
+      const houseY = seaY + 6 * scale;
+      const houseW = 54 * scale;
+      const houseH = 34 * scale;
+
+      const towerBaseX = w * 0.46;
+      const towerBaseY = seaY + 6 * scale;
+
+      windCtx.beginPath();
+      windCtx.moveTo(towerBaseX, towerBaseY - 4 * scale);
+      windCtx.lineTo(houseX, houseY - 4 * scale);
+      windCtx.strokeStyle = pElec > 10 ? '#38bdf8' : '#334155';
+      windCtx.lineWidth = 2.5 * scale;
+      windCtx.stroke();
+
+      windCtx.fillStyle = '#1e293b';
+      windCtx.fillRect(houseX, houseY - houseH, houseW, houseH);
+
+      windCtx.beginPath();
+      windCtx.moveTo(houseX - 5 * scale, houseY - houseH);
+      windCtx.lineTo(houseX + houseW / 2, houseY - houseH - 16 * scale);
+      windCtx.lineTo(houseX + houseW + 5 * scale, houseY - houseH);
+      windCtx.closePath();
+      windCtx.fillStyle = '#334155';
+      windCtx.fill();
+
+      const houseLightAlpha = Math.min(1, pElec / 800);
+      if (houseLightAlpha > 0.02) {
+        const winGlow = windCtx.createRadialGradient(
+          houseX + houseW / 2, houseY - houseH * 0.5, 2,
+          houseX + houseW / 2, houseY - houseH * 0.5, 45 * scale
+        );
+        winGlow.addColorStop(0, `rgba(253, 224, 71, ${0.65 * houseLightAlpha})`);
+        winGlow.addColorStop(1, 'rgba(253, 224, 71, 0)');
+        windCtx.fillStyle = winGlow;
+        windCtx.beginPath();
+        windCtx.arc(houseX + houseW / 2, houseY - houseH * 0.5, 45 * scale, 0, Math.PI * 2);
+        windCtx.fill();
+      }
+
+      windCtx.fillStyle = houseLightAlpha > 0.02
+        ? `rgba(254, 240, 138, ${0.35 + 0.65 * houseLightAlpha})`
+        : '#475569';
+      windCtx.fillRect(houseX + 10 * scale, houseY - 22 * scale, 12 * scale, 12 * scale);
+      windCtx.fillRect(houseX + 32 * scale, houseY - 22 * scale, 12 * scale, 12 * scale);
+
+      // 6. Menara & Baling-baling Turbin Angin
+      const towerHeight = 165 * scale;
+      const hubX = towerBaseX;
+      const hubY = towerBaseY - towerHeight;
+
+      const bladeLength = (Math.sqrt(windState.area / 12.0) * 82) * scale;
+
+      windCtx.beginPath();
+      windCtx.arc(hubX, hubY, bladeLength, 0, Math.PI * 2);
+      windCtx.setLineDash([5, 5]);
+      windCtx.strokeStyle = 'rgba(56, 189, 248, 0.24)';
+      windCtx.lineWidth = 1.5;
+      windCtx.stroke();
+      windCtx.setLineDash([]);
+
+      windCtx.beginPath();
+      windCtx.moveTo(towerBaseX - 8 * scale, towerBaseY);
+      windCtx.lineTo(hubX - 3.5 * scale, hubY);
+      windCtx.lineTo(hubX + 3.5 * scale, hubY);
+      windCtx.lineTo(towerBaseX + 8 * scale, towerBaseY);
+      windCtx.closePath();
+      const towerGrad = windCtx.createLinearGradient(towerBaseX - 8 * scale, 0, towerBaseX + 8 * scale, 0);
+      towerGrad.addColorStop(0, '#94a3b8');
+      towerGrad.addColorStop(0.5, '#f1f5f9');
+      towerGrad.addColorStop(1, '#64748b');
+      windCtx.fillStyle = towerGrad;
+      windCtx.fill();
+
+      windCtx.fillStyle = '#e2e8f0';
+      windCtx.beginPath();
+      windCtx.roundRect(hubX - 10 * scale, hubY - 7 * scale, 24 * scale, 14 * scale, 4 * scale);
+      windCtx.fill();
+
+      windCtx.save();
+      windCtx.translate(hubX, hubY);
+      windCtx.rotate(windState.rotorAngle);
+
+      for (let i = 0; i < 3; i++) {
+        windCtx.save();
+        windCtx.rotate((i * Math.PI * 2) / 3);
+
+        windCtx.beginPath();
+        windCtx.moveTo(0, -3.5 * scale);
+        windCtx.quadraticCurveTo(bladeLength * 0.3, -8.5 * scale, bladeLength, -1.5 * scale);
+        windCtx.lineTo(bladeLength, 1.5 * scale);
+        windCtx.quadraticCurveTo(bladeLength * 0.3, 4 * scale, 0, 3.5 * scale);
+        windCtx.closePath();
+
+        const bladeGrad = windCtx.createLinearGradient(0, 0, bladeLength, 0);
+        bladeGrad.addColorStop(0, '#f8fafc');
+        bladeGrad.addColorStop(0.85, '#cbd5e1');
+        bladeGrad.addColorStop(1, '#38bdf8');
+        windCtx.fillStyle = bladeGrad;
+        windCtx.fill();
+
+        windCtx.restore();
+      }
+
+      windCtx.beginPath();
+      windCtx.arc(0, 0, 9 * scale, 0, Math.PI * 2);
+      windCtx.fillStyle = '#38bdf8';
+      windCtx.fill();
+      windCtx.lineWidth = 2 * scale;
+      windCtx.strokeStyle = '#ffffff';
+      windCtx.stroke();
+
+      windCtx.restore();
+
+      // Label Informasi di Canvas
+      windCtx.fillStyle = 'rgba(226, 232, 240, 0.85)';
+      windCtx.font = `600 ${Math.max(10, Math.round(11 * scale))}px Inter, sans-serif`;
+      windCtx.textAlign = 'center';
+      windCtx.fillText(`Luas Sapuan A = ${windState.area.toFixed(1)} m²`, hubX, hubY - bladeLength - 12 * scale);
+      windCtx.fillText(`Suplai: ${pElec >= 1000 ? (pElec/1000).toFixed(2) + ' kW' : pElec.toFixed(1) + ' W'}`, houseX + houseW / 2, houseY - houseH - 24 * scale);
+    }
+
+
+    // =========================================================================
+    // RESIZE RESPONSIF & MAIN ANIMATION LOOP (TAB 2 & 3)
+    // =========================================================================
+    function resizeCanvases() {
+      const bikeWrapper = document.getElementById('bikeCanvasWrapper');
+      if (bikeWrapper && bikeWrapper.clientWidth > 0) {
+        bikeCanvas.width = bikeWrapper.clientWidth;
+        bikeCanvas.height = bikeWrapper.clientHeight;
+      }
+
+      const windWrapper = document.getElementById('windCanvasWrapper');
+      if (windWrapper && windWrapper.clientWidth > 0) {
+        windCanvas.width = windWrapper.clientWidth;
+        windCanvas.height = windWrapper.clientHeight;
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvases);
+
+    let lastFrameTime = performance.now();
+
+    function mainLoop(now) {
+      const dt = Math.min((now - lastFrameTime) / 1000, 0.05);
+      lastFrameTime = now;
+
+      if (activeTab === 1) {
+        updateBikePhysics(dt);
+        renderBikeScene();
+      } else if (activeTab === 2) {
+        updateWindPhysics(dt);
+        renderWindScene();
+      }
+
+      requestAnimationFrame(mainLoop);
+    }
+
+    window.addEventListener('load', function () {
+      resizeCanvases();
+      initWindParticles();
+      drawPedalControl();
+      calculateAndDisplayWindMetrics();
+      lastFrameTime = performance.now();
+      requestAnimationFrame(mainLoop);
+    });
+  </script>
 </body>
 </html>
